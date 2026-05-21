@@ -1,0 +1,20 @@
+{
+  "name": "supabase-card-checkout-test",
+  "version": "1.0.0",
+  "description": "Checkout próprio para testes integrado com Supabase e Netlify",
+  "main": "index.html",
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "keywords": [
+    "supabase",
+    "netlify",
+    "checkout",
+    "card-test"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}

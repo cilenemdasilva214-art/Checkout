@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gateway Test Checkout | Premium Payment Sandbox</title>
+  <!-- Google Fonts: Outfit & Space Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <!-- FontAwesome para ícones premium -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- CSS Personalizado -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Background decorativo com blur gradiente -->
+  <div class="bg-blur-circle primary"></div>
+  <div class="bg-blur-circle secondary"></div>
+
+  <div class="app-container">
+    <!-- Cabeçalho -->
+    <header class="app-header">
+      <div class="logo">
+        <i class="fa-solid fa-shield-halved logo-icon"></i>
+        <h1>Secure<span>Sandbox</span></h1>
+      </div>
+      <div class="env-badge">
+        <span class="pulse-dot"></span>
+        Ambiente de Testes (Pix & Cartão)
+      </div>
+    </header>
+
+    <!-- Layout Principal -->
+    <main class="checkout-layout">
+      
+      <!-- Formulários de Checkout -->
+      <section class="checkout-forms">
+        <form id="checkout-form" novalidate>
+          
+          <!-- SEÇÃO 1: DADOS DO CLIENTE -->
+          <div class="checkout-section active" data-step="1">
+            <div class="section-header">
+              <span class="step-number">01</span>
+              <h2>Identificação do Cliente</h2>
+              <i class="fa-solid fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="section-content">
+              <div class="form-grid">
+                <div class="form-group col-12">
+                  <label for="customer_name">Nome Completo</label>
+                  <div class="input-wrapper">
+                    <i class="fa-regular fa-user input-icon"></i>
+                    <input type="text" id="customer_name" placeholder="John Doe" required>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label for="customer_email">E-mail</label>
+                  <div class="input-wrapper">
+                    <i class="fa-regular fa-envelope input-icon"></i>
+                    <input type="email" id="customer_email" placeholder="john@example.com" required>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label for="customer_phone">Celular / WhatsApp</label>
+                  <div class="input-wrapper">
+                    <i class="fa-solid fa-phone input-icon"></i>
+                    <input type="text" id="customer_phone" placeholder="(11) 99999-9999" required>
+                  </div>
+                </div>
+                <div class="form-group col-12">
+                  <label for="customer_cpf">CPF (Cliente)</label>
+                  <div class="input-wrapper">
+                    <i class="fa-regular fa-id-card input-icon"></i>
+                    <input type="text" id="customer_cpf" placeholder="000.000.000-00" required>
+                  </div>
+                </div>
+              </div>
+              <div class="section-actions">
+                <button type="button" class="btn btn-primary next-step">Continuar <i class="fa-solid fa-arrow-right"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEÇÃO 2: ENDEREÇO & ENTREGA -->
+          <div class="checkout-section" data-step="2">
+            <div class="section-header">
+              <span class="step-number">02</span>
+              <h2>Endereço & Entrega</h2>
+              <i class="fa-solid fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="section-content">
+              <div class="form-grid">
+                <div class="form-group col-4">
+                  <label for="cep">CEP</label>
+                  <div class="input-wrapper">
+                    <i class="fa-solid fa-location-dot input-icon"></i>
+                    <input type="text" id="cep" placeholder="00000-000" required>
+                    <span class="cep-loader" id="cep-loader"><i class="fa-solid fa-circle-notch fa-spin"></i></span>
+                  </div>
+                </div>
+                <div class="form-group col-8">
+                  <label for="street">Endereço / Logradouro</label>
+                  <div class="input-wrapper">
+                    <input type="text" id="street" placeholder="Rua / Avenida" required>
+                  </div>
+                </div>
+                <div class="form-group col-4">
+                  <label for="street_number">Número</label>
+                  <div class="input-wrapper">
+                    <input type="text" id="street_number" placeholder="123" required>
+                  </div>
+                </div>
+                <div class="form-group col-8">
+                  <label for="complement">Complemento</label>
+                  <div class="input-wrapper">
+                    <input type="text" id="complement" placeholder="Apto, Bloco, etc.">
+                  </div>
+                </div>
+                <div class="form-group col-5">
+                  <label for="neighborhood">Bairro</label>
+                  <div class="input-wrapper">
+                    <input type="text" id="neighborhood" placeholder="Bairro" required>
+                  </div>
+                </div>
+                <div class="form-group col-5">
+                  <label for="city">Cidade</label>
+                  <div class="input-wrapper">
+                    <input type="text" id="city" placeholder="Cidade" required>
+                  </div>
+                </div>
+                <div class="form-group col-2">
+                  <label for="state">UF</label>
+                  <div class="input-wrapper">
+                    <input type="text" id="state" placeholder="SP" maxlength="2" required>
+                  </div>
+                </div>
+                <div class="form-group col-12">
+                  <label>Método de Frete</label>
+                  <div class="shipping-options">
+                    <label class="shipping-option active">
+                      <input type="radio" name="shipping_method" value="standard" checked>
+                      <div class="shipping-info">
+                        <span class="option-title">Entrega Padrão</span>
+                        <span class="option-time">3 a 5 dias úteis</span>
+                      </div>
+                      <span class="option-price" data-price="15.00">R$ 15,00</span>
+                    </label>
+                    <label class="shipping-option">
+                      <input type="radio" name="shipping_method" value="express">
+                      <div class="shipping-info">
+                        <span class="option-title">Entrega Expressa</span>
+                        <span class="option-time">1 a 2 dias úteis</span>
+                      </div>
+                      <span class="option-price" data-price="35.00">R$ 35,00</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="section-actions">
+                <button type="button" class="btn btn-secondary prev-step"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                <button type="button" class="btn btn-primary next-step">Continuar <i class="fa-solid fa-arrow-right"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEÇÃO 3: DADOS DE PAGAMENTO (CARTÃO OU PIX) -->
+          <div class="checkout-section" data-step="3">
+            <div class="section-header">
+              <span class="step-number">03</span>
+              <h2>Dados de Pagamento</h2>
+              <i class="fa-solid fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="section-content">
+              
+              <!-- ABAS DE NAVEGAÇÃO DO PAGAMENTO -->
+              <div class="payment-tabs">
+                <button type="button" class="payment-tab active" data-target="card">
+                  <i class="fa-solid fa-credit-card"></i> Cartão de Crédito
+                </button>
+                <button type="button" class="payment-tab" data-target="pix">
+                  <i class="fa-brands fa-pix"></i> Pix Instantâneo
+                </button>
+              </div>
+
+              <!-- INPUT OCULTO QUE TRACKEA O METODO SELECIONADO -->
+              <input type="hidden" id="selected-payment-method" value="card">
+
+              <!-- ÁREA DO CARTÃO DE CRÉDITO -->
+              <div id="payment-card-fields" class="payment-method-fields active">
+                <div class="form-grid">
+                  <div class="form-group col-12">
+                    <label for="card_number">Número do Cartão</label>
+                    <div class="input-wrapper">
+                      <i class="fa-regular fa-credit-card input-icon"></i>
+                      <input type="text" id="card_number" placeholder="4111 1111 1111 1111" maxlength="19" required>
+                      <span class="card-brand-badge" id="card-brand-badge"><i class="fa-solid fa-credit-card"></i></span>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-12">
+                    <label for="card_holder">Nome Impresso no Cartão</label>
+                    <div class="input-wrapper">
+                      <i class="fa-regular fa-address-card input-icon"></i>
+                      <input type="text" id="card_holder" placeholder="NOME DO TITULAR" required>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-6">
+                    <label for="card_expiry">Validade</label>
+                    <div class="input-wrapper">
+                      <i class="fa-regular fa-calendar-days input-icon"></i>
+                      <input type="text" id="card_expiry" placeholder="MM/AA" maxlength="5" required>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-6">
+                    <label for="card_cvv">Código CVV</label>
+                    <div class="input-wrapper">
+                      <i class="fa-solid fa-lock input-icon"></i>
+                      <input type="text" id="card_cvv" placeholder="123" maxlength="4" required>
+                    </div>
+                  </div>
+
+                  <div class="form-group col-12">
+                    <label for="card_installments">Parcelamento</label>
+                    <div class="input-wrapper">
+                      <i class="fa-solid fa-list-ol input-icon"></i>
+                      <select id="card_installments">
+                        <option value="1">1x sem juros (Valor Total)</option>
+                        <option value="2">2x sem juros</option>
+                        <option value="3">3x sem juros</option>
+                        <option value="4">4x sem juros</option>
+                        <option value="5">5x sem juros</option>
+                        <option value="6">6x sem juros</option>
+                        <option value="10">10x com juros de 1.99% a.m.</option>
+                        <option value="12">12x com juros de 1.99% a.m.</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- DADOS EXTRAS DE 3DS PARA TESTE -->
+                  <div class="form-group col-12 accordion-advanced">
+                    <div class="advanced-header" id="advanced-toggle">
+                      <span>Parâmetros de Teste Avançado (3DS)</span>
+                      <i class="fa-solid fa-plus advanced-icon"></i>
+                    </div>
+                    <div class="advanced-content" id="advanced-content">
+                      <div class="form-grid pt-3">
+                        <div class="form-group col-6">
+                          <label for="three_ds_status">3DS Status</label>
+                          <div class="input-wrapper">
+                            <select id="three_ds_status">
+                              <option value="not_attempted">Not Attempted (Padrão)</option>
+                              <option value="authenticated">Authenticated (Sucesso 3DS)</option>
+                              <option value="failed">Failed (Falha 3DS)</option>
+                              <option value="rejected">Rejected (Rejeitado)</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div class="form-group col-6">
+                          <label for="three_ds_code_raw">3DS ECI Code (Raw)</label>
+                          <div class="input-wrapper">
+                            <input type="text" id="three_ds_code_raw" placeholder="Ex: 05, 02, 07" maxlength="5">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ÁREA DO PIX INSTANTÂNEO -->
+              <div id="payment-pix-fields" class="payment-method-fields">
+                <div class="pix-instruction-box">
+                  <div class="pix-instruction-header">
+                    <i class="fa-brands fa-pix pix-icon-brand"></i>
+                    <span>Pagamento Seguro por Pix</span>
+                  </div>
+                  <p class="pix-description">
+                    Ao finalizar o pedido, geraremos uma chave Pix única do tipo **Copia e Cola** e o respectivo **QR Code** utilizando a API da PagueX.
+                  </p>
+                  <div class="pix-bullets">
+                    <div class="pix-bullet">
+                      <i class="fa-solid fa-circle-check"></i>
+                      <span><strong>Liberação Imediata:</strong> Processado e confirmado em segundos.</span>
+                    </div>
+                    <div class="pix-bullet">
+                      <i class="fa-solid fa-circle-check"></i>
+                      <span><strong>Conexão Direta:</strong> Gravado na sua base do Supabase com status `PENDING`.</span>
+                    </div>
+                    <div class="pix-bullet">
+                      <i class="fa-solid fa-triangle-exclamation"></i>
+                      <span><strong>Aviso da API:</strong> O valor mínimo exigido pela PagueX para criar o Pix é **R$ 5,00**.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-actions mt-4">
+                <button type="button" class="btn btn-secondary prev-step"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                <button type="submit" class="btn btn-success" id="btn-submit-checkout">
+                  <span class="btn-text">Finalizar e Salvar no Supabase</span>
+                  <span class="btn-loader hide"><i class="fa-solid fa-spinner fa-spin"></i> Processando...</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </section>
+
+      <!-- Visualização do Cartão/Pix & Resumo do Pedido -->
+      <section class="checkout-summary">
+        
+        <div class="card-viewer-container">
+          
+          <!-- Cartão Virtual 3D (Ativo por padrão) -->
+          <div class="virtual-card active" id="virtual-card">
+            <!-- FRENTE DO CARTÃO -->
+            <div class="card-face card-front">
+              <div class="card-bg-overlay"></div>
+              <div class="card-header-view">
+                <span class="chip"></span>
+                <span class="card-brand-logo" id="card-logo-view">
+                  <i class="fa-solid fa-credit-card"></i>
+                </span>
+              </div>
+              <div class="card-number-view" id="card-number-view">•••• •••• •••• ••••</div>
+              <div class="card-footer-view">
+                <div class="card-holder-section">
+                  <span class="label">TITULAR DO CARTÃO</span>
+                  <span class="value" id="card-holder-view">NOME COMPLETO</span>
+                </div>
+                <div class="card-expiry-section">
+                  <span class="label">VALIDADE</span>
+                  <span class="value" id="card-expiry-view">MM/AA</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- TRÁS DO CARTÃO -->
+            <div class="card-face card-back">
+              <div class="card-bg-overlay"></div>
+              <div class="card-black-stripe"></div>
+              <div class="card-cvv-section">
+                <span class="label">CÓDIGO CVV</span>
+                <div class="cvv-bar">
+                  <span class="cvv-value" id="card-cvv-view">•••</span>
+                </div>
+              </div>
+              <div class="card-back-info">
+                <span>SANDBOX CARD SYSTEM</span>
+                <span>ONLY FOR TRANSACTION TESTING</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Visualizador do Pix Virtual (Oculto por padrão) -->
+          <div class="pix-virtual-viewer" id="pix-virtual-viewer">
+            <div class="pix-logo-header">
+              <i class="fa-brands fa-pix"></i>
+              <span>PIX</span>
+            </div>
+            <div class="pix-viewer-body">
+              <div class="pix-qr-placeholder">
+                <i class="fa-solid fa-qrcode fa-beat-fade"></i>
+              </div>
+              <span class="pix-status-text">Aguardando Confirmação</span>
+            </div>
+            <div class="pix-viewer-footer">
+              <span>PAGUEX GATEWAY INTERACTION</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Resumo do Pedido -->
+        <div class="order-summary-box">
+          <h3>Resumo da Compra</h3>
+          
+          <div class="items-list" id="items-list">
+            <!-- Item de Teste Dinâmico -->
+            <div class="item-row">
+              <div class="item-info">
+                <span class="item-title">Pacote Sandbox Elite</span>
+                <span class="item-subtitle">Acesso para testes ilimitados</span>
+              </div>
+              <div class="item-price-edit">
+                R$ <input type="number" id="base-amount" value="129.90" step="0.01" min="0.01">
+              </div>
+            </div>
+          </div>
+
+          <div class="pricing-summary">
+            <div class="price-row">
+              <span>Subtotal</span>
+              <span id="summary-subtotal">R$ 129,90</span>
+            </div>
+            <div class="price-row">
+              <span>Frete</span>
+              <span id="summary-shipping">R$ 15,00</span>
+            </div>
+            <div class="price-row total">
+              <span>Total Geral</span>
+              <span id="summary-total">R$ 144,90</span>
+            </div>
+          </div>
+
+          <div class="summary-disclaimer">
+            <i class="fa-solid fa-circle-info"></i>
+            Esta transação salvará os dados informados do checkout diretamente em sua base de dados do Supabase.
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL DE SUCESSO/FALHA -->
+  <div class="modal-overlay" id="status-modal">
+    <div class="modal-card">
+      <div class="modal-header-status">
+        <div class="status-icon-container" id="status-icon-box">
+          <i class="fa-solid fa-check" id="status-icon"></i>
+        </div>
+        <h2 id="status-title">Processando...</h2>
+        <p id="status-subtitle">Gravando informações na base Supabase.</p>
+      </div>
+
+      <div class="modal-body-content">
+        
+        <!-- ÁREA DINÂMICA DO PIX (Exibida apenas em sucesso de Pix) -->
+        <div class="modal-pix-area hide" id="modal-pix-area">
+          <div class="pix-qr-container">
+            <img src="" id="pix-qr-image" alt="Pix QR Code">
+            <div class="qr-loading-spinner" id="qr-loading-spinner">
+              <i class="fa-solid fa-circle-notch fa-spin"></i>
+            </div>
+          </div>
+          
+          <div class="pix-copy-paste-container">
+            <label for="pix-copy-input">Código Pix Copia e Cola</label>
+            <div class="pix-input-group">
+              <input type="text" id="pix-copy-input" readonly value="">
+              <button type="button" class="btn-copy-pix" id="btn-copy-pix">
+                <i class="fa-regular fa-copy" id="copy-icon"></i> 
+                <span id="copy-btn-text">Copiar</span>
+              </button>
+            </div>
+          </div>
+          
+          <div class="pix-payment-instructions">
+            <div class="instruction-item">
+              <span class="number">1</span>
+              <span>Abra o app do seu banco ou carteira digital.</span>
+            </div>
+            <div class="instruction-item">
+              <span class="number">2</span>
+              <span>Escolha a opção de pagar via Pix (com código Copia e Cola ou lendo o QR Code).</span>
+            </div>
+            <div class="instruction-item">
+              <span class="number">3</span>
+              <span>Confirme as informações e finalize o pagamento de teste.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESPOSTA JSON DO SERVIDOR -->
+        <div class="api-response-wrapper">
+          <div class="response-header">
+            <span>RESPOSTA DO SERVIDOR (SUPABASE / PAGUEX)</span>
+            <span class="badge" id="response-mode">MODO</span>
+          </div>
+          <pre class="response-json" id="response-json-preview">...</pre>
+        </div>
+      </div>
+
+      <div class="modal-footer-actions">
+        <button class="btn btn-primary w-100" id="btn-close-modal">
+          <i class="fa-solid fa-rotate-right"></i> Fazer Outro Teste
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Principal -->
+  <script src="js/app.js"></script>
+</body>
+</html>
