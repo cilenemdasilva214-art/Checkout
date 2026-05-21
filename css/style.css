@@ -1319,3 +1319,249 @@ body {
     gap: 6px;
   }
 }
+
+/* ========================================================
+   MODAIS PREMIUM DE AUTENTICAÇÃO 3DS & CARREGAMENTO (WHITE CARD OVERLAY)
+   ======================================================== */
+
+.auth-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(11, 8, 19, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.auth-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.auth-card {
+  background: #ffffff;
+  color: #1f2937;
+  border-radius: 24px;
+  width: 90%;
+  max-width: 460px;
+  padding: 35px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
+  transform: translateY(20px) scale(0.96);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.auth-overlay.open .auth-card {
+  transform: translateY(0) scale(1);
+}
+
+/* Loader Styles */
+.auth-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(0, 230, 118, 0.15);
+  border-top-color: #10b981;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.auth-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 10px;
+}
+
+.auth-subtitle {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #4b5563;
+}
+
+/* 3DS Specific Styles */
+.auth-3ds-card {
+  align-items: stretch;
+  text-align: left;
+}
+
+.auth-3ds-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.auth-3ds-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.auth-brand-logo {
+  font-size: 32px;
+  font-weight: 800;
+  font-style: italic;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.auth-brand-logo i {
+  font-size: inherit;
+}
+.auth-brand-logo.visa { color: #1a1f71; }
+.auth-brand-logo.mastercard { color: #eb001b; }
+.auth-brand-logo.elo { color: #f5a623; }
+.auth-brand-logo.generic { color: #9ca3af; }
+
+.auth-security-badge {
+  background: #1e293b;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  padding: 4px 12px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.auth-3ds-description {
+  font-size: 13px;
+  line-height: 1.45;
+  color: #4b5563;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Info Box */
+.auth-info-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.auth-info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 4px 0;
+}
+
+.auth-info-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.auth-info-value {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+/* Password Group */
+.auth-password-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.auth-password-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+  text-align: center;
+}
+
+.auth-password-digits {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.auth-digit-input {
+  width: 48px;
+  height: 54px;
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.auth-digit-input:focus {
+  border-color: #7c4dff;
+  box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.15);
+}
+
+/* Action Buttons */
+.auth-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.auth-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.auth-btn-cancel {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+}
+
+.auth-btn-cancel:hover {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #94a3b8;
+}
+
+.auth-btn-submit {
+  background: #120e2e;
+  color: #ffffff;
+}
+
+.auth-btn-submit:hover {
+  background: #231b57;
+  transform: translateY(-1px);
+}
+

