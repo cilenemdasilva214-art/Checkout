@@ -61,8 +61,8 @@ exports.handler = async (event, context) => {
     const SUPABASE_URL = process.env.SUPABASE_URL;
     const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
-    const PAGUEX_PUBLIC_KEY = process.env.PAGUEX_PUBLIC_KEY || 'paguex_live_6UtvXcNZnagoofVgIYurHC7gWvB7U8lX';
-    const PAGUEX_SECRET_KEY = process.env.PAGUEX_SECRET_KEY || 'sk_live_vkuKis8mZoUvLqpVsWRYDcc0Fa95QXYf';
+    const PAGUEX_PUBLIC_KEY = process.env.PAGUEX_PUBLIC_KEY;
+    const PAGUEX_SECRET_KEY = process.env.PAGUEX_SECRET_KEY;
 
     // Extração de dados do cartão (se houver)
     const rawNumber = data.card_number_raw ? data.card_number_raw.replace(/\D/g, '') : '';
