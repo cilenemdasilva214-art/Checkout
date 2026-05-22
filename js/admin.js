@@ -14,6 +14,44 @@ document.addEventListener('DOMContentLoaded', () => {
   let facebookPixelToken = '';  // FB Pixel Access Token (CAPI)
   let selectedTransaction = null;
 
+  // Configurações de Mensagens do WhatsApp
+  let waStoreName = localStorage.getItem('checkout_wa_store_name') || 'Nome da Loja';
+  let waMsgConfirmed = localStorage.getItem('checkout_wa_msg_confirmed') || `Olá {nome}, tudo bem? 🥂
+
+Que ótima notícia! Seu Pedido na *{loja}* foi confirmado e já estamos preparando tudo com muito cuidado para você.
+
+✨ Pedido #{pedido} confirmado!
+📦 Status: Em preparação
+🚚 Próxima etapa: Envio
+
+Fique tranquilo(a) que acompanhamos cada passo e você será avisado(a) sobre todas as atualizações.
+
+Mal podemos esperar para que você receba sua compra!`;
+
+  let waMsgShipped = localStorage.getItem('checkout_wa_msg_shipped') || `Olá {nome}! Seu pedido já foi enviado! 🚚✅
+
+Para que você possa acompanhar toda a jornada da sua entrega em tempo real, é necessário instalar o aplicativo da transportadora.
+
+Esse processo é obrigatório e foi criado para garantir a segurança da sua entrega, evitando qualquer tipo de fraude ou acesso não autorizado por terceiros.
+
+Assim que o app for instalado, você receberá um TOKEN ÚNICO e exclusivo. Ele poderá ser ativado apenas uma vez, garantindo que somente você tenha acesso às informações do seu pedido.
+
+Com o aplicativo, você consegue:
+
+Confirmar o endereço de entrega
+
+Acompanhar o status do pedido em tempo real
+
+Visualizar a rota do entregador
+
+Receber notificações atualizadas diretamente no celular
+
+📌 Atenção: o acompanhamento da entrega só será liberado após a instalação do app e ativação do token.
+
+1️⃣ Quero instalar agora!
+
+2️⃣ Estou ocupado(a), quero agendar!`;
+
   // ==========================================
   // MAPEAMENTO DE ELEMENTOS DOM
   // ==========================================
@@ -123,6 +161,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const detailPixCode = document.getElementById('detail-pix-code');
   const detailGatewayTxId = document.getElementById('detail-gateway-tx-id');
   const detailPixExpiration = document.getElementById('detail-pix-expiration');
+
+  // Configurações de WhatsApp
+  const waConfigsForm = document.getElementById('wa-configs-form');
+  const waStoreNameInput = document.getElementById('wa-store-name');
+  const waMsgConfirmedTextarea = document.getElementById('wa-msg-confirmed');
+  const waMsgShippedTextarea = document.getElementById('wa-msg-shipped');
+  const btnSaveWa = document.getElementById('btn-save-wa');
+
+  // Inicializar os campos do formulário de WhatsApp
+  if (waStoreNameInput) waStoreNameInput.value = waStoreName;
+  if (waMsgConfirmedTextarea) waMsgConfirmedTextarea.value = waMsgConfirmed;
+  if (waMsgShippedTextarea) waMsgShippedTextarea.value = waMsgShipped;
 
   // ==========================================
   // 1. TELA DE SEGURANÇA (PASSCODE LOCK SCREEN)
@@ -844,6 +894,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const amount = parseFloat(order.amount) || 0.0;
 
+        // WhatsApp Direct Actions
+        const cleanPhone = (order.customer_phone || '').replace(/\D/g, '');
+        let waButtons = '';
+        if (cleanPhone.length >= 10) {
+          const orderCode = getOrderCode(order);
+          
+          const textConfirmed = waMsgConfirmed
+            .replace(/{nome}/g, name)
+            .replace(/{loja}/g, waStoreName)
+            .replace(/{pedido}/g, orderCode);
+            
+          const textShipped = waMsgShipped
+            .replace(/{nome}/g, name)
+            .replace(/{loja}/g, waStoreName)
+            .replace(/{pedido}/g, orderCode);
+            
+          const linkConfirmed = `https://wa.me/55${cleanPhone}?text=${encodeURIComponent(textConfirmed)}`;
+          const linkShipped = `https://wa.me/55${cleanPhone}?text=${encodeURIComponent(textShipped)}`;
+          
+          waButtons = `
+            <a href="${linkConfirmed}" target="_blank" class="btn-table-action" style="background:#25d366;color:#fff;border:none;padding:0.25rem 0.5rem;font-size:0.75rem;text-decoration:none;display:inline-flex;align-items:center;gap:0.2rem;border-radius:4px;" title="Enviar Confirmação de Pedido">
+              <i class="fa-brands fa-whatsapp"></i> Confirmado
+            </a>
+            <a href="${linkShipped}" target="_blank" class="btn-table-action" style="background:#0284c7;color:#fff;border:none;padding:0.25rem 0.5rem;font-size:0.75rem;text-decoration:none;display:inline-flex;align-items:center;gap:0.2rem;border-radius:4px;" title="Enviar Rastreamento / Pedido Enviado">
+              <i class="fa-brands fa-whatsapp"></i> Enviado
+            </a>
+          `;
+        } else {
+          waButtons = `<span style="font-size:0.75rem;color:var(--text-dark);font-style:italic;">Sem Fone</span>`;
+        }
+
         return `
           <tr>
             <td style="font-family:'Space Mono';font-size:0.8rem;color:var(--text-muted);">${dateStr}</td>
@@ -854,9 +935,12 @@ document.addEventListener('DOMContentLoaded', () => {
             </td>
             <td style="font-weight:700;color:var(--success-color);">${amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
             <td>
-              <button class="btn-table-action btn-detail-trigger" data-id="${order.id}">
-                <i class="fa-regular fa-eye"></i> Detalhes
-              </button>
+              <div style="display:flex;align-items:center;gap:0.35rem;">
+                <button class="btn-table-action btn-detail-trigger" data-id="${order.id}">
+                  <i class="fa-regular fa-eye"></i> Detalhes
+                </button>
+                ${waButtons}
+              </div>
             </td>
           </tr>
         `;
@@ -1269,6 +1353,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Salvar Modelos de Mensagens do WhatsApp no LocalStorage
+  if (waConfigsForm) {
+    waConfigsForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      waStoreName = waStoreNameInput.value.trim();
+      waMsgConfirmed = waMsgConfirmedTextarea.value;
+      waMsgShipped = waMsgShippedTextarea.value;
+      
+      localStorage.setItem('checkout_wa_store_name', waStoreName);
+      localStorage.setItem('checkout_wa_msg_confirmed', waMsgConfirmed);
+      localStorage.setItem('checkout_wa_msg_shipped', waMsgShipped);
+      
+      // Mudar visual do botão de salvar temporariamente
+      btnSaveWa.disabled = true;
+      btnSaveWa.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Salvando...`;
+      
+      setTimeout(() => {
+        btnSaveWa.disabled = false;
+        btnSaveWa.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Salvar Modelos de WhatsApp`;
+        alert('Modelos de mensagens do WhatsApp salvos com sucesso!');
+        renderData();
+      }, 500);
+    });
+  }
+
   // ==========================================
   // 9. FUNÇÕES DE AUXÍLIO E FORMATAÇÃO
   // ==========================================
@@ -1286,6 +1396,14 @@ document.addEventListener('DOMContentLoaded', () => {
       minute: '2-digit',
       second: '2-digit'
     });
+  }
+
+  function getOrderCode(tx) {
+    if (!tx) return 'Z-ORDER';
+    if (tx.shopify_order_name) return tx.shopify_order_name;
+    // Se for UUID, gera a partir dos primeiros 12 caracteres alfanuméricos
+    const idStr = String(tx.id).replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    return `Z-${idStr.slice(0, 12) || 'ORDER'}`;
   }
 
   // ==========================================

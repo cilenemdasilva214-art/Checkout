@@ -80,6 +80,12 @@
             </a>
           </li>
           <li>
+            <a class="menu-item" data-view="mensagens">
+              <i class="fa-brands fa-whatsapp" style="color:#25d366;"></i>
+              <span>Mensagens Whats</span>
+            </a>
+          </li>
+          <li>
             <a class="menu-item" data-view="configs">
               <i class="fa-solid fa-sliders"></i>
               <span>Configurações</span>
@@ -523,6 +529,47 @@
               </tbody>
             </table>
           </div>
+        </div>
+      </section>
+
+      <!-- VIEW: MENSAGENS WHATSAPP -->
+      <section class="view-panel hide" id="view-mensagens">
+        <div class="dashboard-block">
+          <div class="block-title">
+            <h2><i class="fa-brands fa-whatsapp" style="color:#25d366;"></i> Modelos de Mensagens de WhatsApp</h2>
+            <span>Personalize os textos automáticos disparados para os clientes</span>
+          </div>
+
+          <form class="settings-form" id="wa-configs-form">
+            <div class="settings-group">
+              <label for="wa-store-name">Nome da Loja</label>
+              <div class="settings-input-wrapper">
+                <i class="fa-solid fa-store"></i>
+                <input type="text" id="wa-store-name" placeholder="Ex: Minha Loja Premium" required>
+              </div>
+              <span style="font-size:0.8rem;color:var(--text-muted);">Esta variável será injetada em local de <code>{loja}</code> nas mensagens.</span>
+            </div>
+
+            <div class="settings-group">
+              <label for="wa-msg-confirmed">Mensagem 1: Pedido Aprovado / Confirmado</label>
+              <textarea id="wa-msg-confirmed" rows="8" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--border-color); color:var(--text-main); border-radius:8px; padding:0.75rem; font-family:inherit; resize:vertical;" required></textarea>
+              <span style="font-size:0.8rem;color:var(--text-muted); margin-top:0.35rem; display:block;">
+                Variáveis disponíveis: <strong>{nome}</strong> (nome do cliente), <strong>{loja}</strong> (nome da loja), <strong>{pedido}</strong> (código gerado do pedido).
+              </span>
+            </div>
+
+            <div class="settings-group">
+              <label for="wa-msg-shipped">Mensagem 2: Pedido Enviado</label>
+              <textarea id="wa-msg-shipped" rows="12" style="width:100%; background:rgba(0,0,0,0.2); border:1px solid var(--border-color); color:var(--text-main); border-radius:8px; padding:0.75rem; font-family:inherit; resize:vertical;" required></textarea>
+              <span style="font-size:0.8rem;color:var(--text-muted); margin-top:0.35rem; display:block;">
+                Variáveis disponíveis: <strong>{nome}</strong> (nome do cliente), <strong>{loja}</strong> (nome da loja), <strong>{pedido}</strong> (código gerado do pedido).
+              </span>
+            </div>
+
+            <button type="submit" class="btn-save" id="btn-save-wa" style="width:100%; margin-top:1.5rem; background:linear-gradient(135deg, #25d366, #075e54); color:#fff; border:none; padding:1rem; border-radius:8px; font-weight:700; cursor:pointer; box-shadow:0 0 15px rgba(37,211,102,0.25); display:flex; align-items:center; justify-content:center; gap:0.5rem; transition:transform 0.2s, box-shadow 0.2s;">
+              <i class="fa-solid fa-floppy-disk"></i> Salvar Modelos de WhatsApp
+            </button>
+          </form>
         </div>
       </section>
 
