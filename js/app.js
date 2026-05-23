@@ -403,15 +403,28 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
           logoContainer.style.width = 'auto';
         }
       }
-      if (logoIcon) logoIcon.classList.add('hide');
-      if (logoText) logoText.classList.add('hide');
+      if (logoIcon) {
+        logoIcon.classList.add('hide');
+        logoIcon.style.setProperty('display', 'none', 'important');
+      }
+      if (logoText) {
+        logoText.classList.add('hide');
+        logoText.style.setProperty('display', 'none', 'important');
+      }
     } else {
       if (customLogoImg) {
         customLogoImg.src = '';
         customLogoImg.classList.add('hide');
       }
-      if (logoIcon) logoIcon.classList.remove('hide');
-      if (logoText) logoText.classList.remove('hide');
+      if (logoIcon) {
+        logoIcon.classList.add('hide');
+        logoIcon.style.setProperty('display', 'none', 'important');
+      }
+      if (logoText) {
+        logoText.textContent = config.footerStoreName || 'Checkout';
+        logoText.classList.remove('hide');
+        logoText.style.removeProperty('display');
+      }
     }
 
     if (config.favicon) {
@@ -2467,7 +2480,7 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
           // Carregar QR Code visual
           qrLoadingSpinner.classList.add('show');
           pixQrImage.onload = () => qrLoadingSpinner.classList.remove('show');
-          pixQrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=10&data=${encodeURIComponent(responseData.pix_qr_code)}`;
+          pixQrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=20&data=${encodeURIComponent(responseData.pix_qr_code)}`;
 
           // Rastreamento Pix Purchase
           let subtotal = parseFloat(amountInput.value) || 0;

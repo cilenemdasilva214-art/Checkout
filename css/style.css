@@ -1138,7 +1138,8 @@ body {
   height: 200px;
   background: #fff;
   border-radius: 12px;
-  padding: 10px;
+  padding: 20px;
+  margin: 15px 0;
   display: flex;
   align-items: center;
   justify-content: center;
