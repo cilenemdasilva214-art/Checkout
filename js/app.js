@@ -8,23 +8,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // Identificação do Dispositivo e Adaptação de Layout (Mobile vs Desktop)
   const initDeviceLayout = () => {
     const isMobile = window.innerWidth <= 1024 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const orderSummaryBox = document.querySelector('.order-summary-box');
+    const stepsContainer = document.querySelector('.checkout-steps-container');
+    const summarySection = document.querySelector('.checkout-summary');
+    let toggleBar = document.getElementById('mobile-summary-toggle');
     
     if (isMobile) {
+      document.body.classList.remove('device-desktop');
       document.body.classList.add('device-mobile');
-      
-      // Criar a barra de toggle do resumo para mobile se não existir
-      let toggleBar = document.getElementById('mobile-summary-toggle');
-      const orderSummaryBox = document.querySelector('.order-summary-box');
-      const stepsContainer = document.querySelector('.checkout-steps-container');
       
       if (!toggleBar && orderSummaryBox && stepsContainer) {
         toggleBar = document.createElement('div');
         toggleBar.id = 'mobile-summary-toggle';
-        toggleBar.className = 'mobile-summary-toggle';
+        toggleBar.className = 'mobile-summary-toggle open';
         toggleBar.innerHTML = `
           <div class="toggle-left">
             <i class="fa-solid fa-cart-shopping"></i>
-            <span id="mobile-summary-toggle-text">Mostrar resumo da compra</span>
+            <span id="mobile-summary-toggle-text">Ocultar resumo da compra</span>
             <i class="fa-solid fa-chevron-down chevron-icon"></i>
           </div>
           <div class="toggle-right">
@@ -35,7 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Inserir antes da barra de passos
         stepsContainer.parentNode.insertBefore(toggleBar, stepsContainer);
         
-        // Mover a caixa de resumo para ficar logo após o toggle
+        // Mover a caixa de resumo para ficar logo após o toggle e abri-la por padrão
+        orderSummaryBox.classList.add('open');
         toggleBar.parentNode.insertBefore(orderSummaryBox, toggleBar.nextSibling);
         
         // Configurar o clique do toggle
@@ -45,14 +46,36 @@ document.addEventListener('DOMContentLoaded', () => {
           const isExpanded = toggleBar.classList.contains('open');
           document.getElementById('mobile-summary-toggle-text').textContent = isExpanded ? 'Ocultar resumo da compra' : 'Mostrar resumo da compra';
         });
+      } else if (toggleBar && orderSummaryBox) {
+        // Garantir que no mobile comece aberto
+        toggleBar.classList.add('open');
+        orderSummaryBox.classList.add('open');
+        const textLabel = document.getElementById('mobile-summary-toggle-text');
+        if (textLabel) {
+          textLabel.textContent = 'Ocultar resumo da compra';
+        }
       }
     } else {
       document.body.classList.remove('device-mobile');
       document.body.classList.add('device-desktop');
+      
+      // Mover a caixa de resumo de volta para a seção lateral de resumo no desktop
+      if (orderSummaryBox && summarySection) {
+        orderSummaryBox.classList.remove('open');
+        if (orderSummaryBox.parentNode !== summarySection) {
+          summarySection.insertBefore(orderSummaryBox, summarySection.firstChild);
+        }
+      }
+      
+      // Remover a barra de toggle mobile
+      if (toggleBar) {
+        toggleBar.remove();
+      }
     }
   };
 
   initDeviceLayout();
+  window.addEventListener('resize', initDeviceLayout);
   
   // ==========================================
   // 0. SESSÃO LOCAL, DRAFT E FACEBOOK PIXEL
