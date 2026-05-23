@@ -5,6 +5,55 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   
+  // Identificação do Dispositivo e Adaptação de Layout (Mobile vs Desktop)
+  const initDeviceLayout = () => {
+    const isMobile = window.innerWidth <= 1024 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      document.body.classList.add('device-mobile');
+      
+      // Criar a barra de toggle do resumo para mobile se não existir
+      let toggleBar = document.getElementById('mobile-summary-toggle');
+      const orderSummaryBox = document.querySelector('.order-summary-box');
+      const stepsContainer = document.querySelector('.checkout-steps-container');
+      
+      if (!toggleBar && orderSummaryBox && stepsContainer) {
+        toggleBar = document.createElement('div');
+        toggleBar.id = 'mobile-summary-toggle';
+        toggleBar.className = 'mobile-summary-toggle';
+        toggleBar.innerHTML = `
+          <div class="toggle-left">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span id="mobile-summary-toggle-text">Mostrar resumo da compra</span>
+            <i class="fa-solid fa-chevron-down chevron-icon"></i>
+          </div>
+          <div class="toggle-right">
+            <span id="mobile-summary-total-val">R$ 0,00</span>
+          </div>
+        `;
+        
+        // Inserir antes da barra de passos
+        stepsContainer.parentNode.insertBefore(toggleBar, stepsContainer);
+        
+        // Mover a caixa de resumo para ficar logo após o toggle
+        toggleBar.parentNode.insertBefore(orderSummaryBox, toggleBar.nextSibling);
+        
+        // Configurar o clique do toggle
+        toggleBar.addEventListener('click', () => {
+          toggleBar.classList.toggle('open');
+          orderSummaryBox.classList.toggle('open');
+          const isExpanded = toggleBar.classList.contains('open');
+          document.getElementById('mobile-summary-toggle-text').textContent = isExpanded ? 'Ocultar resumo da compra' : 'Mostrar resumo da compra';
+        });
+      }
+    } else {
+      document.body.classList.remove('device-mobile');
+      document.body.classList.add('device-desktop');
+    }
+  };
+
+  initDeviceLayout();
+  
   // ==========================================
   // 0. SESSÃO LOCAL, DRAFT E FACEBOOK PIXEL
   // ==========================================
@@ -1500,6 +1549,12 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
       } else {
         pixEconomyText.style.display = 'none';
       }
+    }
+
+    // Atualizar valor total na barra de toggle mobile
+    const mobileSummaryTotalVal = document.getElementById('mobile-summary-total-val');
+    if (mobileSummaryTotalVal) {
+      mobileSummaryTotalVal.textContent = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
   }
 
