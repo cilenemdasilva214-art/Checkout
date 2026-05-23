@@ -1041,7 +1041,7 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
           const month = parseInt(parts[0], 10);
           const year = parseInt(parts[1], 10);
           
-          if (isNaN(month) || isNaN(year) || month < 1 || month > 12 || year < 28) {
+          if (isNaN(month) || isNaN(year) || month < 1 || month > 12 || year < 26) {
             isExpiryValid = false;
           }
         } else {
