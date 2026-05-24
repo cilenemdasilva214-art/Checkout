@@ -403,63 +403,58 @@
                        </div>
                      </label>
                      <div class="payment-option-body" id="body-card">
-                       <!-- Campos do Cartão -->
-                       <div class="form-grid" style="margin-top: 10px; margin-bottom: 20px; text-align: left;">
-                         <div class="form-group col-12">
-                           <label for="card_number">Número do Cartão</label>
-                           <div class="input-wrapper">
-                             <i class="fa-regular fa-credit-card input-icon"></i>
-                             <input type="text" id="card_number" placeholder="4111 1111 1111 1111" maxlength="19">
-                             <span class="card-brand-badge" id="card-brand-badge"><i class="fa-solid fa-credit-card"></i></span>
-                           </div>
-                         </div>
+                        <!-- Campos do Cartão -->
+                        <div class="form-grid" style="margin-top: 10px; margin-bottom: 20px; text-align: left;">
+                          <div class="form-group col-12">
+                            <label for="card_number">Número do cartão</label>
+                            <div class="input-wrapper">
+                              <input type="text" id="card_number" placeholder="0000 0000 0000 0000" maxlength="19">
+                              <span class="card-brand-badge" id="card-brand-badge"><i class="fa-solid fa-credit-card" style="color: #9ca3af;"></i></span>
+                            </div>
+                          </div>
 
-                         <div class="form-group col-12">
-                           <label for="card_holder">Nome Impresso no Cartão</label>
-                           <div class="input-wrapper">
-                             <i class="fa-regular fa-address-card input-icon"></i>
-                             <input type="text" id="card_holder" placeholder="NOME DO TITULAR">
-                           </div>
-                         </div>
+                          <div class="form-group col-6">
+                            <label for="card_expiry">Validade (mês ano)</label>
+                            <div class="input-wrapper">
+                              <input type="text" id="card_expiry" placeholder="MM/AA" maxlength="5">
+                            </div>
+                            <span class="expiry-error-msg hide" id="expiry-error-message" style="color: #dc2626; font-size: 0.75rem; margin-top: 4px; display: block; font-weight: 500;">A data de validade está vencida (mínimo 26).</span>
+                          </div>
 
-                         <div class="form-group col-6">
-                           <label for="card_expiry">Validade</label>
-                           <div class="input-wrapper">
-                             <i class="fa-regular fa-calendar-days input-icon"></i>
-                             <input type="text" id="card_expiry" placeholder="MM/AA" maxlength="5">
-                           </div>
-                           <span class="expiry-error-msg hide" id="expiry-error-message" style="color: #dc2626; font-size: 0.75rem; margin-top: 4px; display: block; font-weight: 500;">A data de validade está vencida (mínimo 26).</span>
-                         </div>
+                          <div class="form-group col-6">
+                            <label for="card_cvv">Cód. de segurança</label>
+                            <div class="input-wrapper">
+                              <input type="text" id="card_cvv" placeholder="CVV" maxlength="4">
+                            </div>
+                          </div>
 
-                         <div class="form-group col-6">
-                           <label for="card_cvv">Código CVV</label>
-                           <div class="input-wrapper">
-                             <i class="fa-solid fa-lock input-icon"></i>
-                             <input type="text" id="card_cvv" placeholder="123" maxlength="4">
-                           </div>
-                         </div>
+                          <div class="form-group col-12">
+                            <label for="card_holder">Nome impresso no cartão</label>
+                            <div class="input-wrapper">
+                              <input type="text" id="card_holder" placeholder="Como está no cartão">
+                            </div>
+                          </div>
 
-                         <div class="form-group col-12">
-                           <label for="card_installments">Parcelamento</label>
-                           <div class="input-wrapper">
-                             <i class="fa-solid fa-list-ol input-icon"></i>
-                             <select id="card_installments">
-                               <option value="1">1x sem juros (Valor Total)</option>
-                               <option value="2">2x sem juros</option>
-                               <option value="3">3x sem juros</option>
-                               <option value="4">4x sem juros</option>
-                               <option value="5">5x sem juros</option>
-                               <option value="6">6x sem juros</option>
-                               <option value="10">10x com juros de 1.99% a.m.</option>
-                               <option value="12">12x com juros de 1.99% a.m.</option>
-                             </select>
-                           </div>
-                         </div>
-                       </div>
-                       <div class="button-container" id="card-btn-anchor">
-                         <!-- Submit button will be appended here dynamically if Card is active -->
-                       </div>
-                     </div>
+                          <div class="form-group col-12">
+                            <label for="card_holder_cpf">CPF do titular do cartão</label>
+                            <div class="input-wrapper">
+                              <input type="text" id="card_holder_cpf" placeholder="000.000.000-00" maxlength="14">
+                            </div>
+                          </div>
+
+                          <div class="form-group col-12">
+                            <label for="card_installments">Parcelas</label>
+                            <div class="input-wrapper">
+                              <select id="card_installments">
+                                <option value="1">1x de R$ 0,00 Sem juros</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="button-container" id="card-btn-anchor">
+                          <!-- Submit button will be appended here dynamically if Card is active -->
+                        </div>
+                      </div>
                    </div>
                  </div>
 

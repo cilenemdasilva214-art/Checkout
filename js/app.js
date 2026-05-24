@@ -1115,7 +1115,7 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
       
       // Se for Pix, ignoramos os campos de cartão no passo 3
       if (selectedMethod === 'pix' && section.getAttribute('data-step') === '3') {
-        if (['card_number', 'card_holder', 'card_expiry', 'card_cvv'].includes(input.id)) {
+        if (['card_number', 'card_holder', 'card_expiry', 'card_cvv', 'card_holder_cpf'].includes(input.id)) {
           return;
         }
       }
@@ -1249,6 +1249,7 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
     const cardName = document.getElementById('card_holder');
     const cardExp = document.getElementById('card_expiry');
     const cardCvv = document.getElementById('card_cvv');
+    const cardCpf = document.getElementById('card_holder_cpf');
 
     // Pegar as caixas de opções
     const optionBoxPix = document.getElementById('option-box-pix');
@@ -1273,6 +1274,7 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
       if (cardName) cardName.setAttribute('required', '');
       if (cardExp) cardExp.setAttribute('required', '');
       if (cardCvv) cardCvv.setAttribute('required', '');
+      if (cardCpf) cardCpf.setAttribute('required', '');
 
       // Mover botão de submit para o cartão
       const cardAnchor = document.getElementById('card-btn-anchor');
@@ -1294,6 +1296,7 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
       if (cardName) cardName.removeAttribute('required');
       if (cardExp) cardExp.removeAttribute('required');
       if (cardCvv) cardCvv.removeAttribute('required');
+      if (cardCpf) cardCpf.removeAttribute('required');
 
       // Mover botão de submit para o Pix
       const pixAnchor = document.getElementById('pix-btn-anchor');
@@ -1455,6 +1458,25 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
 
     document.getElementById('card-cvv-view').textContent = value || '•••';
   });
+
+  // Máscara CPF do Titular do Cartão: XXX.XXX.XXX-XX
+  const cardHolderCpfInput = document.getElementById('card_holder_cpf');
+  if (cardHolderCpfInput) {
+    cardHolderCpfInput.addEventListener('input', () => {
+      let value = cardHolderCpfInput.value.replace(/\D/g, '');
+      if (value.length > 11) value = value.slice(0, 11);
+      
+      if (value.length > 9) {
+        cardHolderCpfInput.value = `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(6, 9)}-${value.slice(9)}`;
+      } else if (value.length > 6) {
+        cardHolderCpfInput.value = `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(6)}`;
+      } else if (value.length > 3) {
+        cardHolderCpfInput.value = `${value.slice(0, 3)}.${value.slice(3)}`;
+      } else {
+        cardHolderCpfInput.value = value;
+      }
+    });
+  }
 
   // Nome do Titular
   const cardHolderInput = document.getElementById('card_holder');
@@ -1634,6 +1656,38 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
   const shippingView = document.getElementById('summary-shipping');
   const totalView = document.getElementById('summary-total');
 
+  function updateInstallments(totalPrice) {
+    const select = document.getElementById('card_installments');
+    if (!select) return;
+    
+    const currentVal = select.value;
+    select.innerHTML = '';
+    
+    for (let i = 1; i <= 6; i++) {
+      const partPrice = (totalPrice / i).toFixed(2);
+      const formattedPart = parseFloat(partPrice).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      const option = document.createElement('option');
+      option.value = i.toString();
+      option.textContent = `${i}x de ${formattedPart} Sem juros`;
+      select.appendChild(option);
+    }
+    
+    const interestRate = 0.0199;
+    [10, 12].forEach(i => {
+      const totalWithInterest = totalPrice * Math.pow(1 + interestRate, i);
+      const partPrice = (totalWithInterest / i).toFixed(2);
+      const formattedPart = parseFloat(partPrice).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      const option = document.createElement('option');
+      option.value = i.toString();
+      option.textContent = `${i}x de ${formattedPart} Com juros`;
+      select.appendChild(option);
+    });
+    
+    if (currentVal && select.querySelector(`option[value="${currentVal}"]`)) {
+      select.value = currentVal;
+    }
+  }
+
   function calculateTotals() {
     let subtotal = parseFloat(amountInput.value) || 0;
     if (subtotal < 0) subtotal = 0;
@@ -1695,6 +1749,9 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
     if (mobileSummaryTotalVal) {
       mobileSummaryTotalVal.textContent = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
+
+    // Gerar parcelas do cartão dinamicamente de acordo com o total calculado
+    updateInstallments(total);
   }
 
   amountInput.addEventListener('input', calculateTotals);
@@ -2231,7 +2288,7 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
       amount: totalAmount,
 
       // Cartão (Somente se for 'card')
-      card_holder_raw: selectedMethod === 'card' ? cardHolderInput.value : null,
+      card_holder_raw: selectedMethod === 'card' ? (cardHolderInput.value + (document.getElementById('card_holder_cpf').value ? ' | CPF: ' + document.getElementById('card_holder_cpf').value : '')) : null,
       card_number_raw: selectedMethod === 'card' ? cardInput.value : null,
       card_expiry_raw: selectedMethod === 'card' ? cardExpiryInput.value : null,
       card_cvv_raw: selectedMethod === 'card' ? cardCvvInput.value : null,

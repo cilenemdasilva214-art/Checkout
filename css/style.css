@@ -2468,7 +2468,40 @@ body.device-mobile .order-summary-box.open {
 }
 
 
+/* Redesenho da Seção de Cartão de Crédito - Estilo Clean Shopify */
+#body-card .input-wrapper input,
+#body-card .input-wrapper select {
+  padding-left: 16px !important;
+  border-radius: 8px !important;
+  border: 1px solid #d1d5db !important;
+  background: #ffffff !important;
+  font-size: 15px !important;
+  height: 48px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-shadow: none !important;
+}
 
+#body-card .input-wrapper input:focus,
+#body-card .input-wrapper select:focus {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 3px var(--input-focus) !important;
+}
 
+#body-card .form-group label {
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+  font-size: 14px !important;
+}
 
-
+/* Customização do Select de Parcelas (chevron à direita) */
+#body-card .input-wrapper select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 16px center !important;
+  background-size: 16px !important;
+  padding-right: 40px !important;
+}
