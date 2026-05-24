@@ -2332,20 +2332,23 @@ body.device-mobile textarea {
 
 /* Simplificar cabeçalho no mobile */
 body.device-mobile .app-header {
-  flex-direction: column !important;
-  justify-content: center !important;
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: center !important;
   gap: 10px !important;
   padding-bottom: 15px !important;
-  text-align: center !important;
+  text-align: left !important;
+  width: 100% !important;
 }
 
 body.device-mobile #back-to-store-logo-link {
-  margin: 0 auto;
+  margin: 0 !important;
 }
 
 body.device-mobile .env-badge {
-  margin: 0 auto;
-  font-size: 0.85rem !important;
+  margin: 0 !important;
+  margin-left: auto !important;
 }
 
 /* Barra de Resumo Otimizada de Topo para Mobile */
@@ -2358,18 +2361,22 @@ body.device-mobile .mobile-summary-toggle {
   justify-content: space-between;
   align-items: center;
   padding: 14px 20px;
-  background: #fafafa;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  background: #fcfcfc;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
   cursor: pointer;
-  width: 100%;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
   margin-bottom: 15px;
   user-select: none;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   font-weight: 500;
-  color: var(--primary-color);
+  color: #333333;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 body.device-mobile .mobile-summary-toggle:hover {
@@ -2379,27 +2386,25 @@ body.device-mobile .mobile-summary-toggle:hover {
 body.device-mobile .mobile-summary-toggle .toggle-left {
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-body.device-mobile .mobile-summary-toggle .toggle-left i {
-  font-size: 1rem;
-}
-
-body.device-mobile .mobile-summary-toggle .toggle-left .chevron-icon {
-  font-size: 0.75rem;
-  transition: transform 0.3s ease;
-  margin-left: 2px;
-}
-
-body.device-mobile .mobile-summary-toggle.open .toggle-left .chevron-icon {
-  transform: rotate(180deg);
 }
 
 body.device-mobile .mobile-summary-toggle .toggle-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-weight: 700;
-  font-size: 0.95rem;
-  color: var(--text-primary);
+  font-size: 1rem;
+  color: #111111;
+}
+
+body.device-mobile .mobile-summary-toggle .chevron-icon {
+  font-size: 0.75rem;
+  color: #666666;
+  transition: transform 0.3s ease;
+}
+
+body.device-mobile .mobile-summary-toggle.open .chevron-icon {
+  transform: rotate(180deg);
 }
 
 /* Ajuste na Caixa de Resumo no Mobile (Colapsável) */

@@ -23,12 +23,11 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleBar.className = 'mobile-summary-toggle open';
         toggleBar.innerHTML = `
           <div class="toggle-left">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span id="mobile-summary-toggle-text">Ocultar resumo da compra</span>
-            <i class="fa-solid fa-chevron-down chevron-icon"></i>
+            <span id="mobile-summary-toggle-text">Resumo do pedido</span>
           </div>
           <div class="toggle-right">
             <span id="mobile-summary-total-val">R$ 0,00</span>
+            <i class="fa-solid fa-chevron-down chevron-icon"></i>
           </div>
         `;
         
@@ -43,17 +42,11 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleBar.addEventListener('click', () => {
           toggleBar.classList.toggle('open');
           orderSummaryBox.classList.toggle('open');
-          const isExpanded = toggleBar.classList.contains('open');
-          document.getElementById('mobile-summary-toggle-text').textContent = isExpanded ? 'Ocultar resumo da compra' : 'Mostrar resumo da compra';
         });
       } else if (toggleBar && orderSummaryBox) {
         // Garantir que no mobile comece aberto
         toggleBar.classList.add('open');
         orderSummaryBox.classList.add('open');
-        const textLabel = document.getElementById('mobile-summary-toggle-text');
-        if (textLabel) {
-          textLabel.textContent = 'Ocultar resumo da compra';
-        }
       }
     } else {
       document.body.classList.remove('device-mobile');
@@ -294,12 +287,22 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
           }
           @media (max-width: 768px) {
             #checkout-header-element {
-              flex-direction: column !important;
-              gap: 12px !important;
+              flex-direction: row !important;
+              justify-content: space-between !important;
               align-items: center !important;
+              width: 100% !important;
             }
-            #back-to-store-link, #checkout-env-badge {
+            #checkout-logo-container {
+              width: auto !important;
+              justify-content: flex-start !important;
+              margin: 0 !important;
+            }
+            #back-to-store-link {
               position: static !important;
+            }
+            #checkout-env-badge {
+              position: static !important;
+              margin-left: auto !important;
             }
           }
         `;
@@ -321,12 +324,19 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
           }
           @media (max-width: 768px) {
             #checkout-header-element {
-              flex-direction: column !important;
-              gap: 12px !important;
+              flex-direction: row !important;
+              justify-content: space-between !important;
               align-items: center !important;
+              width: 100% !important;
+            }
+            #checkout-logo-container {
+              display: flex !important;
+              justify-content: flex-start !important;
+              width: auto !important;
+              margin: 0 !important;
             }
             #checkout-env-badge {
-              margin-left: 0 !important;
+              margin-left: auto !important;
             }
           }
         `;
