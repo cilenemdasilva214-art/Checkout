@@ -4188,6 +4188,26 @@ Fico no aguardo! 😊`;
     }
   }
 
+  // Listener para revelar campo de token manualmente
+  const btnShowTokenInputManual = document.getElementById('btn-show-token-input-manual');
+  if (btnShowTokenInputManual) {
+    btnShowTokenInputManual.addEventListener('click', (e) => {
+      e.preventDefault();
+      const container = document.getElementById('sh-access-token-container');
+      const msg = document.getElementById('sh-awaiting-token-msg');
+      if (container && msg) {
+        container.style.display = 'block';
+        msg.style.display = 'none';
+        
+        // Limpar o placeholder padrão para facilitar colagem manual do token correto shpat_
+        const tokenInput = document.getElementById('sh-access-token');
+        if (tokenInput && tokenInput.value === 'shpat_c0e256979d2452fc854db87384386xxxx') {
+          tokenInput.value = '';
+        }
+      }
+    });
+  }
+
   // Listener para o seletor dropdown do Status da Integração
   const shopifyStatusSelect = document.getElementById('shopify-status-select');
   if (shopifyStatusSelect) {

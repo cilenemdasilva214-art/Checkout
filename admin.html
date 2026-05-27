@@ -2140,11 +2140,16 @@
               </div>
 
               <!-- Aviso: Aguardando Token -->
-              <div id="sh-awaiting-token-msg" style="background: rgba(149, 191, 71, 0.04); border: 1px dashed rgba(149, 191, 71, 0.3); border-radius: 8px; padding: 1rem; color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; display: flex; align-items: center; gap: 0.75rem;">
-                <i class="fa-solid fa-wand-magic-sparkles" style="color: #95bf47; font-size: 1.1rem;"></i>
-                <span>
-                  <strong>Token de Acesso Admin:</strong> Será gerado e preenchido de forma 100% automática assim que você instalar o app na sua Shopify usando o Client ID e Secret.
-                </span>
+              <div id="sh-awaiting-token-msg" style="background: rgba(149, 191, 71, 0.04); border: 1px dashed rgba(149, 191, 71, 0.3); border-radius: 8px; padding: 1rem; color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; width: 100%;">
+                  <i class="fa-solid fa-wand-magic-sparkles" style="color: #95bf47; font-size: 1.1rem; flex-shrink: 0;"></i>
+                  <span>
+                    <strong>Token de Acesso Admin:</strong> Será gerado e preenchido de forma 100% automática assim que você instalar o app na sua Shopify.
+                  </span>
+                </div>
+                <div style="width: 100%; border-top: 1px dashed rgba(149, 191, 71, 0.15); padding-top: 0.5rem; display: flex; justify-content: flex-end;">
+                  <a href="#" id="btn-show-token-input-manual" style="color: #95bf47; text-decoration: underline; font-weight: 600; font-size: 0.8rem; cursor: pointer;">Inserir token manualmente (shpat_...)</a>
+                </div>
               </div>
 
               <!-- Campo: Client ID -->
