@@ -2157,15 +2157,20 @@
                 <label style="display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">
                   Client ID *
                 </label>
-                <input type="text" id="sh-client-id" value="01f8ba9c35c5bb9bef70d949d2356676" placeholder="Identificador do cliente" style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--panel-border); color: var(--text-main); border-radius: 8px; padding: 0.75rem; font-family: inherit; font-size: 0.95rem; outline: none; height: 46px; box-sizing: border-box;">
+                <input type="text" id="sh-client-id" value="01f8ba9c35c5bb9bef70d949d2356676" placeholder="Identificador do cliente" style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--panel-border); color: var(--text-main); border-radius: 8px; padding: 0.75rem; font-family: inherit; font-size: 0.95rem; outline: none; height: 46px; box-sizing: border-box;" autocomplete="off">
               </div>
 
               <!-- Campo: Secret -->
               <div>
                 <label style="display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">
-                  Secret *
+                  Segredo da API (Client Secret) *
                 </label>
-                <input type="password" id="sh-secret" value="shpss_252c116837c44ea156428f65c773xxxx" placeholder="Segredo da API" style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--panel-border); color: var(--text-main); border-radius: 8px; padding: 0.75rem; font-family: inherit; font-size: 0.95rem; outline: none; height: 46px; box-sizing: border-box;">
+                <input type="text" id="sh-secret" value="shpss_252c116837c44ea156428f65c773xxxx" placeholder="Chave Secreta da API / Client Secret" style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--panel-border); color: var(--text-main); border-radius: 8px; padding: 0.75rem; font-family: inherit; font-size: 0.95rem; outline: none; height: 46px; box-sizing: border-box;" autocomplete="off">
+                <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 0.4rem; line-height: 1.4;">
+                  <i class="fa-solid fa-circle-info" style="color: #95bf47; margin-right: 4px;"></i> 
+                  Cole o <strong>Client Secret</strong> (Chave secreta da API) do seu aplicativo na Shopify. 
+                  <em>Não digite a senha da sua conta Shopify ou do painel aqui.</em>
+                </span>
               </div>
 
               <!-- Checkboxes -->

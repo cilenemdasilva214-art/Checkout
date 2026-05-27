@@ -313,7 +313,14 @@ Fico no aguardo! 😊`;
   let adminPassword = '123456789';
 
   function checkAuthentication() {
-    const isAuth = sessionStorage.getItem('admin_authenticated');
+    // Se a URL tiver code e shop (redirecionamento da instalação da Shopify), auto-autentica o usuário para pular a tela de login
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('code') && urlParams.has('shop')) {
+      console.log('🔑 Auto-autenticação ativada via retorno de instalação Shopify.');
+      localStorage.setItem('admin_authenticated', 'true');
+    }
+
+    const isAuth = localStorage.getItem('admin_authenticated');
     if (isAuth === 'true') {
       if (lockScreen) lockScreen.classList.add('hide');
     }
@@ -324,7 +331,7 @@ Fico no aguardo! 😊`;
     const typedPass = loginPasswordInput ? loginPasswordInput.value : '';
 
     if (typedUser === adminUsername && typedPass === adminPassword) {
-      sessionStorage.setItem('admin_authenticated', 'true');
+      localStorage.setItem('admin_authenticated', 'true');
       if (lockScreen) lockScreen.classList.add('hide');
       if (loginUsernameInput) loginUsernameInput.value = '';
       if (loginPasswordInput) loginPasswordInput.value = '';
@@ -4407,6 +4414,10 @@ Fico no aguardo! 😊`;
 
         if (response.ok) {
           alert('Configurações salvas e integração Shopify ativada com sucesso!');
+          // Dispara a sincronização automática do catálogo em segundo plano
+          console.log('🔄 Sincronizando catálogo do Shopify automaticamente...');
+          loadShopifyProducts(true);
+          loadShopifyCollections(true);
         } else {
           const text = await response.text();
           alert(`Erro ao salvar configurações da Shopify: ${text}`);
@@ -4550,6 +4561,10 @@ Fico no aguardo! 😊`;
 
                 if (saveRes.ok) {
                   alert('Parabéns! O Token de acesso API Admin foi gerado com sucesso e a integração com a Shopify foi ativada!');
+                  // Dispara a sincronização automática do catálogo em segundo plano
+                  console.log('🔄 Sincronizando catálogo do Shopify automaticamente...');
+                  loadShopifyProducts(true);
+                  loadShopifyCollections(true);
                 } else {
                   alert('Token gerado com sucesso, mas ocorreu um erro ao salvar as configurações no banco.');
                 }
