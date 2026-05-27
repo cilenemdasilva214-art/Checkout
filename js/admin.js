@@ -56,18 +56,19 @@ document.addEventListener('DOMContentLoaded', () => {
     btnText: 'Finalizar Compra',
     btnStyle: 'flat',
     btnLockIcon: false,
-    backLinkActive: true,
-    backLinkText: 'Voltar para a Loja',
-    backLinkUrl: '',
-    typography: 'Inter',
-    footerBgColor: '#164620',
-    footerTextColor: '#ffffff',
-    footerStoreName: 'Porto dos Vinhos',
-    footerStoreAddress: 'Avenida Brasil, 1814 - Jardim América, São Paulo - SP',
-    footerStoreCnpj: '43.855.557/0001-18',
-    footerStorePhone: '+55 (11) 3432-5980',
     footerStoreEmail: 'sacporto@gmail.com',
-    defaultPaymentMethod: 'pix'
+    footerStorePhone: '+55 (11) 3432-5980',
+    footerStoreCnpj: '43.855.557/0001-18',
+    footerStoreAddress: 'Avenida Brasil, 1814 - Jardim América, São Paulo - SP',
+    footerStoreName: 'Porto dos Vinhos',
+    footerTextColor: '#ffffff',
+    footerBgColor: '#164620',
+    typography: 'Inter',
+    backLinkUrl: '',
+    backLinkText: 'Voltar para a Loja',
+    backLinkActive: true,
+    defaultPaymentMethod: 'pix',
+    shopifyActive: false
   };
 
   // Listas de cache locais para novos recursos
@@ -3691,6 +3692,16 @@ Fico no aguardo! 😊`;
     if (shSkipCart) shSkipCart.checked = !!themeConfig.shopifySkipCart;
     if (shImportCoupons) shImportCoupons.checked = !!themeConfig.shopifyImportCoupons;
     
+    // Inicialização do Status da Integração com compatibilidade inteligente
+    let isShopifyActive = false;
+    if (themeConfig.shopifyActive !== undefined) {
+      isShopifyActive = !!themeConfig.shopifyActive;
+    } else {
+      isShopifyActive = !!(themeConfig.shopifyDomain && themeConfig.shopifyToken && themeConfig.shopifyDomain !== 's1pwiw-kv');
+    }
+    themeConfig.shopifyActive = isShopifyActive;
+    updateStatusBadgeVisual(isShopifyActive);
+    
     updateMockup();
   }
 
@@ -4083,6 +4094,66 @@ Fico no aguardo! 😊`;
   // ==========================================
   // LOGIC FOR SINCRONIZAR SHOPIFY (SHOPIFY INTEGRATION VIEW)
   // ==========================================
+  
+  // Helper para atualizar visualmente o status da integração Shopify
+  function updateStatusBadgeVisual(isActive) {
+    const container = document.getElementById('shopify-status-container');
+    const icon = document.getElementById('shopify-status-icon');
+    const text = document.getElementById('shopify-status-text');
+    const select = document.getElementById('shopify-status-select');
+
+    if (!container || !icon || !text || !select) return;
+
+    if (isActive) {
+      container.style.background = 'rgba(16, 185, 129, 0.08)';
+      container.style.border = '1px solid rgba(16, 185, 129, 0.2)';
+      container.style.color = '#10b981';
+      icon.className = 'fa-solid fa-circle-check';
+      text.innerText = 'Ativo';
+      select.value = 'active';
+    } else {
+      container.style.background = 'rgba(156, 163, 175, 0.08)';
+      container.style.border = '1px solid rgba(156, 163, 175, 0.2)';
+      container.style.color = '#9ca3af';
+      icon.className = 'fa-solid fa-circle-minus';
+      text.innerText = 'Inativo';
+      select.value = 'inactive';
+    }
+  }
+
+  // Listener para o seletor dropdown do Status da Integração
+  const shopifyStatusSelect = document.getElementById('shopify-status-select');
+  if (shopifyStatusSelect) {
+    shopifyStatusSelect.addEventListener('change', async (e) => {
+      const newValue = e.target.value;
+      const isActive = (newValue === 'active');
+      themeConfig.shopifyActive = isActive;
+      updateStatusBadgeVisual(isActive);
+
+      try {
+        const response = await fetch('/api/config', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            checkout_theme_config: JSON.stringify(themeConfig)
+          })
+        });
+
+        if (response.ok) {
+          alert(`Status da integração Shopify atualizado para: ${isActive ? 'Ativo' : 'Inativo'}!`);
+        } else {
+          const err = await response.text();
+          alert('Erro ao atualizar status no banco: ' + err);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Erro de rede ao atualizar status.');
+      }
+    });
+  }
+
   const btnCopyInstallUrl = document.querySelector('.btn-copy-install-url');
   if (btnCopyInstallUrl) {
     btnCopyInstallUrl.addEventListener('click', () => {
@@ -4120,7 +4191,7 @@ Fico no aguardo! 😊`;
   const btnDisconnectShopify = document.getElementById('btn-disconnect-shopify');
   if (btnDisconnectShopify) {
     btnDisconnectShopify.addEventListener('click', async () => {
-      if (confirm('Deseja realmente desconectar a integração com a Shopify?')) {
+      if (confirm('Deseja realmente desconectar a integração com a Shopify? Isso apagará as credenciais salvas.')) {
         const domPref = document.getElementById('sh-domain-prefix');
         const accTok = document.getElementById('sh-access-token');
         const clId = document.getElementById('sh-client-id');
@@ -4141,6 +4212,9 @@ Fico no aguardo! 😊`;
         themeConfig.shopifySecret = '';
         themeConfig.shopifySkipCart = false;
         themeConfig.shopifyImportCoupons = false;
+        themeConfig.shopifyActive = false;
+        
+        updateStatusBadgeVisual(false);
 
         btnDisconnectShopify.disabled = true;
         const originalText = btnDisconnectShopify.innerText;
@@ -4174,24 +4248,48 @@ Fico no aguardo! 😊`;
     });
   }
 
+  const btnReinstallShopify = document.getElementById('btn-reinstall-shopify');
+  if (btnReinstallShopify) {
+    btnReinstallShopify.addEventListener('click', () => {
+      const domPref = document.getElementById('sh-domain-prefix');
+      const accTok = document.getElementById('sh-access-token');
+      const clId = document.getElementById('sh-client-id');
+      const sec = document.getElementById('sh-secret');
+      const skipC = document.getElementById('sh-skip-cart');
+      const impC = document.getElementById('sh-import-coupons');
+
+      if (domPref) domPref.value = '';
+      if (accTok) accTok.value = '';
+      if (clId) clId.value = '';
+      if (sec) sec.value = '';
+      if (skipC) skipC.checked = false;
+      if (impC) impC.checked = false;
+
+      alert('Campos de credenciais da Shopify limpos! Insira as novas informações e clique em "Salvar Configurações" para ativá-las.');
+    });
+  }
+
   const shopifyForm = document.getElementById('shopify-integration-form');
   if (shopifyForm) {
     shopifyForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const btn = document.getElementById('btn-reinstall-shopify');
-      const originalHtml = btn ? btn.innerHTML : 'Reinstalar Checkout';
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Salvando...`;
+      const btnSave = document.getElementById('btn-save-shopify');
+      const originalHtml = btnSave ? btnSave.innerHTML : 'Salvar Configurações';
+      if (btnSave) {
+        btnSave.disabled = true;
+        btnSave.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Salvando...`;
       }
 
-      themeConfig.shopifyDomain = document.getElementById('sh-domain-prefix').value;
-      themeConfig.shopifyToken = document.getElementById('sh-access-token').value;
-      themeConfig.shopifyClientId = document.getElementById('sh-client-id').value;
-      themeConfig.shopifySecret = document.getElementById('sh-secret').value;
+      themeConfig.shopifyDomain = document.getElementById('sh-domain-prefix').value.trim();
+      themeConfig.shopifyToken = document.getElementById('sh-access-token').value.trim();
+      themeConfig.shopifyClientId = document.getElementById('sh-client-id').value.trim();
+      themeConfig.shopifySecret = document.getElementById('sh-secret').value.trim();
       themeConfig.shopifySkipCart = document.getElementById('sh-skip-cart').checked;
       themeConfig.shopifyImportCoupons = document.getElementById('sh-import-coupons').checked;
+      
+      themeConfig.shopifyActive = true;
+      updateStatusBadgeVisual(true);
 
       try {
         const response = await fetch('/api/config', {
@@ -4205,18 +4303,18 @@ Fico no aguardo! 😊`;
         });
 
         if (response.ok) {
-          alert('Checkout reinstalado e sincronizado com a Shopify com sucesso!');
+          alert('Configurações salvas e integração Shopify ativada com sucesso!');
         } else {
           const text = await response.text();
-          alert(`Erro ao sincronizar com Shopify: ${text}`);
+          alert(`Erro ao salvar configurações da Shopify: ${text}`);
         }
       } catch (err) {
         console.error(err);
         alert('Erro de rede ao sincronizar com Shopify.');
       } finally {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = originalHtml;
+        if (btnSave) {
+          btnSave.disabled = false;
+          btnSave.innerHTML = originalHtml;
         }
       }
     });

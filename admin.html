@@ -2172,12 +2172,15 @@
               <div style="border-top: 1px solid var(--panel-border); margin: 0.5rem 0;"></div>
 
               <!-- Botões de Ação Inferiores -->
-              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; width: 100%;">
                 <button type="button" id="btn-disconnect-shopify" style="background: #ef4444; color: #fff; border: none; padding: 0.75rem 1.75rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: inherit;">
                   Desconectar
                 </button>
-                <button type="submit" id="btn-reinstall-shopify" style="background: #fff; color: #1f2937; border: 1px solid var(--panel-border); padding: 0.75rem 1.75rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: inherit;">
+                <button type="button" id="btn-reinstall-shopify" style="background: rgba(255, 255, 255, 0.08); color: var(--text-main); border: 1px solid var(--panel-border); padding: 0.75rem 1.75rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: inherit;">
                   Reinstalar Checkout
+                </button>
+                <button type="submit" id="btn-save-shopify" style="background: #95bf47; color: #fff; border: none; padding: 0.75rem 1.75rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: inherit;">
+                  Salvar Configurações
                 </button>
               </div>
 
@@ -2193,13 +2196,21 @@
                 Status da integração
               </h3>
               
-              <!-- Seletor / Status Ativo -->
-              <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 0.65rem 1rem; display: flex; align-items: center; justify-content: space-between;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; color: #10b981; font-weight: 600; font-size: 0.95rem;">
-                  <i class="fa-solid fa-circle-check"></i>
-                  <span>Ativo</span>
+              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <!-- Seletor Interativo -->
+                <div style="position: relative;">
+                  <select id="shopify-status-select" style="width: 100%; background: rgba(0,0,0,0.25); border: 1px solid var(--panel-border); color: var(--text-main); border-radius: 8px; padding: 0.65rem 1rem; font-family: inherit; font-size: 0.95rem; outline: none; height: 46px; cursor: pointer; -webkit-appearance: none; -moz-appearance: none; appearance: none; padding-right: 2.5rem; font-weight: 600;">
+                    <option value="active" style="background: #111827; color: #fff;">Ativar Integração</option>
+                    <option value="inactive" style="background: #111827; color: #fff;">Desativar Integração</option>
+                  </select>
+                  <i class="fa-solid fa-chevron-down" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); font-size: 0.8rem; color: var(--text-muted); opacity: 0.6; pointer-events: none;"></i>
                 </div>
-                <i class="fa-solid fa-chevron-up-down" style="font-size: 0.8rem; color: var(--text-muted); opacity: 0.6;"></i>
+
+                <!-- Indicador Visual de Status -->
+                <div id="shopify-status-container" style="border-radius: 8px; padding: 0.65rem 1rem; display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease;">
+                  <i id="shopify-status-icon" class="fa-solid fa-circle-check"></i>
+                  <span id="shopify-status-text">Ativo</span>
+                </div>
               </div>
 
               <!-- Dúvidas Link -->
