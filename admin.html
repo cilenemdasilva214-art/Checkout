@@ -2132,11 +2132,19 @@
               </div>
 
               <!-- Campo: Token de acesso api admin -->
-              <div>
+              <div id="sh-access-token-container" style="display: none;">
                 <label style="display: block; font-size: 0.9rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">
                   Token de acesso api admin *
                 </label>
                 <input type="text" id="sh-access-token" value="shpat_c0e256979d2452fc854db87384386xxxx" placeholder="shpat_..." style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--panel-border); color: var(--text-main); border-radius: 8px; padding: 0.75rem; font-family: inherit; font-size: 0.95rem; outline: none; height: 46px; box-sizing: border-box;">
+              </div>
+
+              <!-- Aviso: Aguardando Token -->
+              <div id="sh-awaiting-token-msg" style="background: rgba(149, 191, 71, 0.04); border: 1px dashed rgba(149, 191, 71, 0.3); border-radius: 8px; padding: 1rem; color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; display: flex; align-items: center; gap: 0.75rem;">
+                <i class="fa-solid fa-wand-magic-sparkles" style="color: #95bf47; font-size: 1.1rem;"></i>
+                <span>
+                  <strong>Token de Acesso Admin:</strong> Será gerado e preenchido de forma 100% automática assim que você instalar o app na sua Shopify usando o Client ID e Secret.
+                </span>
               </div>
 
               <!-- Campo: Client ID -->

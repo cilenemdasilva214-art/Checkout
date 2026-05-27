@@ -3701,6 +3701,7 @@ Fico no aguardo! 😊`;
     }
     themeConfig.shopifyActive = isShopifyActive;
     updateStatusBadgeVisual(isShopifyActive);
+    updateTokenFieldVisibility();
     
     updateMockup();
   }
@@ -4095,6 +4096,26 @@ Fico no aguardo! 😊`;
   // LOGIC FOR SINCRONIZAR SHOPIFY (SHOPIFY INTEGRATION VIEW)
   // ==========================================
   
+  // Helper para alternar visibilidade do campo de Token conforme a presença do token real
+  function updateTokenFieldVisibility() {
+    const tokenInput = document.getElementById('sh-access-token');
+    const container = document.getElementById('sh-access-token-container');
+    const msg = document.getElementById('sh-awaiting-token-msg');
+
+    if (!tokenInput || !container || !msg) return;
+
+    const tokenVal = tokenInput.value.trim();
+    const hasToken = tokenVal && tokenVal !== 'shpat_c0e256979d2452fc854db87384386xxxx' && tokenVal !== '';
+
+    if (hasToken) {
+      container.style.display = 'block';
+      msg.style.display = 'none';
+    } else {
+      container.style.display = 'none';
+      msg.style.display = 'flex';
+    }
+  }
+
   // Helper para atualizar visualmente o status da integração Shopify
   function updateStatusBadgeVisual(isActive) {
     const container = document.getElementById('shopify-status-container');
@@ -4215,6 +4236,7 @@ Fico no aguardo! 😊`;
         themeConfig.shopifyActive = false;
         
         updateStatusBadgeVisual(false);
+        updateTokenFieldVisibility();
 
         btnDisconnectShopify.disabled = true;
         const originalText = btnDisconnectShopify.innerText;
@@ -4265,6 +4287,8 @@ Fico no aguardo! 😊`;
       if (skipC) skipC.checked = false;
       if (impC) impC.checked = false;
 
+      updateTokenFieldVisibility();
+
       alert('Campos de credenciais da Shopify limpos! Insira as novas informações e clique em "Salvar Configurações" para ativá-las.');
     });
   }
@@ -4290,6 +4314,7 @@ Fico no aguardo! 😊`;
       
       themeConfig.shopifyActive = true;
       updateStatusBadgeVisual(true);
+      updateTokenFieldVisibility();
 
       try {
         const response = await fetch('/api/config', {
@@ -4430,6 +4455,7 @@ Fico no aguardo! 😊`;
 
                 // Atualizar badge visual
                 updateStatusBadgeVisual(true);
+                updateTokenFieldVisibility();
 
                 // Salvar tudo de forma definitiva no Supabase
                 const saveRes = await fetch('/api/config', {
