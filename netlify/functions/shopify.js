@@ -1,6 +1,16 @@
 // Netlify Serverless Function: shopify
 // Caminho: netlify/functions/shopify.js
 
+function getNextLink(linkHeader) {
+  if (!linkHeader) return null;
+  const links = linkHeader.split(',');
+  for (const link of links) {
+    const match = link.match(/<([^>]+)>;\s*rel="next"/i);
+    if (match) return match[1];
+  }
+  return null;
+}
+
 exports.handler = async (event, context) => {
   // CORS Preflight
   if (event.httpMethod === 'OPTIONS') {
@@ -200,30 +210,47 @@ exports.handler = async (event, context) => {
     // AÇÃO: BUSCAR PRODUTOS
     // ----------------------------------------------------
     if (action === 'products' && event.httpMethod === 'GET') {
-      const url = `https://${storeDomain}/admin/api/2024-01/products.json?limit=250`;
-      console.log(`📡 Buscando produtos da Shopify em: ${url}`);
+      let allProducts = [];
+      let nextUrl = `https://${storeDomain}/admin/api/2024-01/products.json?limit=250`;
       
-      const response = await fetch(url, {
-        headers: {
-          'X-Shopify-Access-Token': accessToken,
-          'Content-Type': 'application/json'
-        }
-      });
+      while (nextUrl) {
+        console.log(`📡 Buscando produtos da Shopify em: ${nextUrl}`);
+        const response = await fetch(nextUrl, {
+          headers: {
+            'X-Shopify-Access-Token': accessToken,
+            'Content-Type': 'application/json'
+          }
+        });
 
-      if (!response.ok) {
-        const errText = await response.text();
-        return {
-          statusCode: response.status,
-          headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
-          body: errText,
-        };
+        if (!response.ok) {
+          const errText = await response.text();
+          return {
+            statusCode: response.status,
+            headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+            body: errText,
+          };
+        }
+
+        const resData = await response.json();
+        const pageProducts = resData.products || [];
+        allProducts = allProducts.concat(pageProducts);
+
+        // Prevenção de loop infinito ou timeout (máximo de 2000 produtos)
+        if (allProducts.length >= 2000) {
+          console.warn('⚠️ Limite de segurança de 2000 produtos atingido.');
+          break;
+        }
+
+        const linkHeader = response.headers.get('link');
+        nextUrl = getNextLink(linkHeader);
       }
 
-      const resData = await response.json();
+      console.log(`✅ Total de produtos carregados e agregados: ${allProducts.length}`);
+
       return {
         statusCode: 200,
         headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
-        body: JSON.stringify(resData.products || []),
+        body: JSON.stringify(allProducts),
       };
     }
 
