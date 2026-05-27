@@ -54,7 +54,9 @@ exports.handler = async (event, context) => {
     }
   }
 
-  if (!storeDomain || !accessToken) {
+  const action = event.queryStringParameters ? (event.queryStringParameters.action || 'products') : 'products';
+
+  if (action !== 'exchange_token' && (!storeDomain || !accessToken)) {
     return {
       statusCode: 500,
       headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
@@ -62,9 +64,60 @@ exports.handler = async (event, context) => {
     };
   }
 
-  const action = event.queryStringParameters.action || 'products';
-
   try {
+    // ----------------------------------------------------
+    // AÇÃO: EXCHANGE TOKEN (OBTER TOKEN DE ACESSO PERMANENTE)
+    // ----------------------------------------------------
+    if (action === 'exchange_token' && event.httpMethod === 'POST') {
+      const data = JSON.parse(event.body || '{}');
+      const { shop, code, client_id, client_secret } = data;
+
+      if (!shop || !code || !client_id || !client_secret) {
+        return {
+          statusCode: 400,
+          headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+          body: JSON.stringify({ error: 'Shop, code, client_id e client_secret são obrigatórios.' }),
+        };
+      }
+
+      let shopUrl = shop.trim();
+      if (!shopUrl.endsWith('.myshopify.com')) {
+        shopUrl = shopUrl + '.myshopify.com';
+      }
+
+      const oauthUrl = `https://${shopUrl}/admin/oauth/access_token`;
+      console.log(`📡 Solicitando Token de Acesso Permanente em: ${oauthUrl}`);
+
+      const response = await fetch(oauthUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          client_id: client_id.trim(),
+          client_secret: client_secret.trim(),
+          code: code.trim()
+        })
+      });
+
+      const resText = await response.text();
+      if (!response.ok) {
+        throw new Error(`Erro na troca de código por token na Shopify: ${response.status} - ${resText}`);
+      }
+
+      const resData = JSON.parse(resText);
+      console.log(`✅ Token gerado com sucesso para a loja: ${shopUrl}`);
+
+      return {
+        statusCode: 200,
+        headers: { 'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_token: resData.access_token,
+          scope: resData.scope
+        }),
+      };
+    }
+
     // ----------------------------------------------------
     // AÇÃO: BUSCAR PRODUTOS
     // ----------------------------------------------------

@@ -4343,42 +4343,130 @@ Fico no aguardo! 😊`;
   // ==========================================
   // INICIALIZAÇÃO AUTOMÁTICA
   // ==========================================
-  loadInitialData();
+  (async () => {
+    await loadInitialData();
 
-  // URL de Instalação Dinâmica de acordo com o domínio do browser
-  const shInstallUrlInput = document.getElementById('sh-install-url');
-  if (shInstallUrlInput) {
-    shInstallUrlInput.value = `${window.location.origin}/api/postback/shopify/install`;
-  }
-
-  // Ativação automática da aba Shopify se vier da instalação do app Shopify
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.has('shop') || urlParams.get('tab') === 'shopify') {
-    const shopifyMenuItem = document.querySelector('.submenu-item[data-view="sincronizar-shopify"]') || 
-                           document.querySelector('.menu-item[data-view="sincronizar-shopify"]') ||
-                           document.querySelector('[data-view="sincronizar-shopify"]');
-    if (shopifyMenuItem) {
-      clearActiveMenuStates();
-      shopifyMenuItem.classList.add('active');
-      
-      const parentGroup = shopifyMenuItem.closest('.menu-group');
-      if (parentGroup) {
-        const parentMenu = parentGroup.querySelector('.menu-parent');
-        if (parentMenu) parentMenu.classList.add('active');
-        const submenu = parentGroup.querySelector('.submenu');
-        if (submenu) submenu.classList.add('expanded');
-      }
-      
-      switchView('sincronizar-shopify');
+    // URL de Instalação Dinâmica de acordo com o domínio do browser
+    const shInstallUrlInput = document.getElementById('sh-install-url');
+    if (shInstallUrlInput) {
+      shInstallUrlInput.value = `${window.location.origin}/api/postback/shopify/install`;
     }
 
-    if (urlParams.has('shop')) {
-      const shopParam = urlParams.get('shop');
-      const prefix = shopParam.replace('.myshopify.com', '');
-      const shDomainPrefixInput = document.getElementById('sh-domain-prefix');
-      if (shDomainPrefixInput) {
-        shDomainPrefixInput.value = prefix;
+    // Ativação automática da aba Shopify se vier da instalação do app Shopify
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('shop') || urlParams.get('tab') === 'shopify') {
+      const shopifyMenuItem = document.querySelector('.submenu-item[data-view="sincronizar-shopify"]') || 
+                             document.querySelector('.menu-item[data-view="sincronizar-shopify"]') ||
+                             document.querySelector('[data-view="sincronizar-shopify"]');
+      if (shopifyMenuItem) {
+        clearActiveMenuStates();
+        shopifyMenuItem.classList.add('active');
+        
+        const parentGroup = shopifyMenuItem.closest('.menu-group');
+        if (parentGroup) {
+          const parentMenu = parentGroup.querySelector('.menu-parent');
+          if (parentMenu) parentMenu.classList.add('active');
+          const submenu = parentGroup.querySelector('.submenu');
+          if (submenu) submenu.classList.add('expanded');
+        }
+        
+        switchView('sincronizar-shopify');
+      }
+
+      if (urlParams.has('shop')) {
+        const shopParam = urlParams.get('shop');
+        const prefix = shopParam.replace('.myshopify.com', '');
+        const shDomainPrefixInput = document.getElementById('sh-domain-prefix');
+        if (shDomainPrefixInput) {
+          shDomainPrefixInput.value = prefix;
+        }
+
+        // Se houver parâmetro 'code', iniciamos a troca de token de acesso automática
+        if (urlParams.has('code')) {
+          const codeParam = urlParams.get('code');
+          const clientId = themeConfig.shopifyClientId || document.getElementById('sh-client-id').value.trim();
+          const secret = themeConfig.shopifySecret || document.getElementById('sh-secret').value.trim();
+
+          if (!clientId || !secret || clientId === '01f8ba9c35c5bb9bef70d949d2356676' || secret === 'shpss_252c116837c44ea156428f65c773xxxx') {
+            alert('Atenção: Para gerar o Token de acesso API Admin automaticamente, você precisa primeiro preencher e salvar o seu Client ID e Client Secret na tela de integração da Shopify.');
+          } else {
+            // Atualiza visualmente para indicar carregamento
+            const btnSave = document.getElementById('btn-save-shopify');
+            const originalHtml = btnSave ? btnSave.innerHTML : 'Salvar Configurações';
+            if (btnSave) {
+              btnSave.disabled = true;
+              btnSave.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Gerando Token...`;
+            }
+
+            try {
+              console.log('📡 Solicitando troca de código por token para:', shopParam);
+              const response = await fetch('/api/shopify?action=exchange_token', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  shop: shopParam,
+                  code: codeParam,
+                  client_id: clientId,
+                  client_secret: secret
+                })
+              });
+
+              if (response.ok) {
+                const resData = await response.json();
+                const permanentToken = resData.access_token;
+
+                // Preencher os dados no formulário
+                const shAccessTokenInput = document.getElementById('sh-access-token');
+                if (shAccessTokenInput) shAccessTokenInput.value = permanentToken;
+
+                // Atualizar themeConfig
+                themeConfig.shopifyDomain = prefix;
+                themeConfig.shopifyToken = permanentToken;
+                themeConfig.shopifyClientId = clientId;
+                themeConfig.shopifySecret = secret;
+                themeConfig.shopifyActive = true;
+
+                // Atualizar badge visual
+                updateStatusBadgeVisual(true);
+
+                // Salvar tudo de forma definitiva no Supabase
+                const saveRes = await fetch('/api/config', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    checkout_theme_config: JSON.stringify(themeConfig)
+                  })
+                });
+
+                if (saveRes.ok) {
+                  alert('Parabéns! O Token de acesso API Admin foi gerado com sucesso e a integração com a Shopify foi ativada!');
+                } else {
+                  alert('Token gerado com sucesso, mas ocorreu um erro ao salvar as configurações no banco.');
+                }
+              } else {
+                const errText = await response.text();
+                alert(`Erro ao gerar token com a Shopify: ${errText}`);
+              }
+            } catch (err) {
+              console.error('Erro na requisição de troca de token:', err);
+              alert('Ocorreu um erro de rede ao tentar gerar o token da Shopify.');
+            } finally {
+              if (btnSave) {
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalHtml;
+              }
+            }
+          }
+
+          // Limpa os parâmetros de código da URL para não rodar novamente no reload
+          const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+          window.history.replaceState({ path: cleanUrl }, '', cleanUrl);
+        }
       }
     }
-  }
+  })();
 });
