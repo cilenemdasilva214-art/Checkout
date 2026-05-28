@@ -30,6 +30,24 @@ exports.handler = async (event, context) => {
   try {
     const data = JSON.parse(event.body || '{}');
 
+    // Obter o domínio de onde a requisição foi feita
+    let requestDomain = data.domain || '';
+    if (!requestDomain) {
+      const referer = event.headers.referer || event.headers.Origin || event.headers.origin || '';
+      if (referer) {
+        try {
+          const url = new URL(referer);
+          requestDomain = url.hostname;
+        } catch (e) {
+          console.warn('Erro ao parsear referer:', referer, e.message);
+        }
+      }
+    }
+    if (!requestDomain) {
+      requestDomain = event.headers.host || '';
+    }
+    requestDomain = requestDomain.split(':')[0].toLowerCase();
+
     // Validações básicas de segurança baseado no método de pagamento
     const paymentMethod = data.payment_method || 'card';
     
@@ -263,7 +281,8 @@ exports.handler = async (event, context) => {
       pix_code: paymentMethod === 'pix' ? pixQrCode : null,
       pix_expiration: paymentMethod === 'pix' ? pixExpiration : null,
       shopify_order_id: shopifyOrderId,
-      shopify_order_name: shopifyOrderName
+      shopify_order_name: shopifyOrderName,
+      domain: requestDomain
     };
 
     // Caso não tenhamos chaves do Supabase, rodamos salvamento simulado (Mock Mode)

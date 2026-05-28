@@ -874,6 +874,7 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
     const payload = {
       checkout_session_id: checkoutSessionId,
       payment_method: selectedMethod,
+      domain: window.location.hostname,
       
       // Cliente
       customer_name: document.getElementById('customer_name').value || null,
@@ -2528,6 +2529,7 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
     const payload = {
       checkout_session_id: uuid,
       payment_method: selectedMethod,
+      domain: window.location.hostname,
       
       // Cliente
       customer_name: document.getElementById('customer_name').value,

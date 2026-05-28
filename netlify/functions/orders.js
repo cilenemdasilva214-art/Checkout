@@ -23,6 +23,22 @@ exports.handler = async (event, context) => {
     };
   }
 
+  // Obter o domínio de onde a requisição de orders foi iniciada
+  const referer = event.headers.referer || event.headers.Origin || event.headers.origin || '';
+  let requestDomain = '';
+  if (referer) {
+    try {
+      const url = new URL(referer);
+      requestDomain = url.hostname;
+    } catch (e) {
+      console.warn('Erro ao parsear referer em orders:', referer, e.message);
+    }
+  }
+  if (!requestDomain) {
+    requestDomain = event.headers.host || '';
+  }
+  requestDomain = requestDomain.split(':')[0].toLowerCase();
+
   const SUPABASE_URL = process.env.SUPABASE_URL;
   const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
@@ -61,13 +77,29 @@ exports.handler = async (event, context) => {
 
     const orders = await response.json();
 
+    // Filtragem inteligente baseada no domínio
+    let filteredOrders = orders;
+    if (requestDomain && requestDomain !== 'localhost' && requestDomain !== '127.0.0.1') {
+      const isPorto = requestDomain.includes('portodosvinhos') || requestDomain.includes('porto-dos-vinhos');
+      filteredOrders = orders.filter(order => {
+        const orderDomain = order.domain ? order.domain.toLowerCase() : '';
+        if (isPorto) {
+          // Porto dos Vinhos: exibe pedidos do próprio domínio + pedidos históricos sem domínio
+          return orderDomain === requestDomain || !order.domain;
+        } else {
+          // Novo Checkout: exibe estritamente apenas os pedidos gerados neste domínio
+          return orderDomain === requestDomain;
+        }
+      });
+    }
+
     return {
       statusCode: 200,
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(orders),
+      body: JSON.stringify(filteredOrders),
     };
 
   } catch (error) {
