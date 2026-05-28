@@ -1400,53 +1400,59 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
   const cardCvvInput = document.getElementById('card_cvv');
 
   // Máscara Celular: (XX) XXXXX-XXXX
-  phoneInput.addEventListener('input', () => {
-    let value = phoneInput.value.replace(/\D/g, '');
-    if (value.length > 11) value = value.slice(0, 11);
-    
-    if (value.length > 6) {
-      phoneInput.value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
-    } else if (value.length > 2) {
-      phoneInput.value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
-    } else if (value.length > 0) {
-      phoneInput.value = `(${value}`;
-    } else {
-      phoneInput.value = '';
-    }
-  });
+  if (phoneInput) {
+    phoneInput.addEventListener('input', () => {
+      let value = phoneInput.value.replace(/\D/g, '');
+      if (value.length > 11) value = value.slice(0, 11);
+      
+      if (value.length > 6) {
+        phoneInput.value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+      } else if (value.length > 2) {
+        phoneInput.value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+      } else if (value.length > 0) {
+        phoneInput.value = `(${value}`;
+      } else {
+        phoneInput.value = '';
+      }
+    });
+  }
 
   // Máscara CPF: XXX.XXX.XXX-XX
-  cpfInput.addEventListener('input', () => {
-    let value = cpfInput.value.replace(/\D/g, '');
-    if (value.length > 11) value = value.slice(0, 11);
-    
-    if (value.length > 9) {
-      cpfInput.value = `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(6, 9)}-${value.slice(9)}`;
-    } else if (value.length > 6) {
-      cpfInput.value = `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(6)}`;
-    } else if (value.length > 3) {
-      cpfInput.value = `${value.slice(0, 3)}.${value.slice(3)}`;
-    } else {
-      cpfInput.value = value;
-    }
-  });
+  if (cpfInput) {
+    cpfInput.addEventListener('input', () => {
+      let value = cpfInput.value.replace(/\D/g, '');
+      if (value.length > 11) value = value.slice(0, 11);
+      
+      if (value.length > 9) {
+        cpfInput.value = `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(6, 9)}-${value.slice(9)}`;
+      } else if (value.length > 6) {
+        cpfInput.value = `${value.slice(0, 3)}.${value.slice(3, 6)}.${value.slice(6)}`;
+      } else if (value.length > 3) {
+        cpfInput.value = `${value.slice(0, 3)}.${value.slice(3)}`;
+      } else {
+        cpfInput.value = value;
+      }
+    });
+  }
 
   // Máscara CEP: XXXXX-XXX
-  cepInput.addEventListener('input', () => {
-    let value = cepInput.value.replace(/\D/g, '');
-    if (value.length > 8) value = value.slice(0, 8);
-    
-    if (value.length > 5) {
-      cepInput.value = `${value.slice(0, 5)}-${value.slice(5)}`;
-    } else {
-      cepInput.value = value;
-    }
+  if (cepInput) {
+    cepInput.addEventListener('input', () => {
+      let value = cepInput.value.replace(/\D/g, '');
+      if (value.length > 8) value = value.slice(0, 8);
+      
+      if (value.length > 5) {
+        cepInput.value = `${value.slice(0, 5)}-${value.slice(5)}`;
+      } else {
+        cepInput.value = value;
+      }
 
-    // Se preencheu os 8 dígitos, dispara busca automática do CEP
-    if (value.length === 8) {
-      buscarCEP(value);
-    }
-  });
+      // Se preencheu os 8 dígitos, dispara busca automática do CEP
+      if (value.length === 8) {
+        buscarCEP(value);
+      }
+    });
+  }
 
   // Listeners para Cidade e UF manuais e preview de CEP
   const cityInput = document.getElementById('city');
@@ -1460,51 +1466,59 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
   setTimeout(updateCepPreview, 200);
 
   // Máscara Cartão de Crédito: XXXX XXXX XXXX XXXX
-  cardInput.addEventListener('input', () => {
-    let value = cardInput.value.replace(/\D/g, '');
-    if (value.length > 16) value = value.slice(0, 16);
-    
-    const parts = [];
-    for (let i = 0; i < value.length; i += 4) {
-      parts.push(value.slice(i, i + 4));
-    }
-    
-    cardInput.value = parts.join(' ');
-    updateVirtualCardNumber(cardInput.value);
-    detectCardBrand(value);
-  });
+  if (cardInput) {
+    cardInput.addEventListener('input', () => {
+      let value = cardInput.value.replace(/\D/g, '');
+      if (value.length > 16) value = value.slice(0, 16);
+      
+      const parts = [];
+      for (let i = 0; i < value.length; i += 4) {
+        parts.push(value.slice(i, i + 4));
+      }
+      
+      cardInput.value = parts.join(' ');
+      updateVirtualCardNumber(cardInput.value);
+      detectCardBrand(value);
+    });
+  }
 
   // Máscara Validade Cartão: MM/AA
-  cardExpiryInput.addEventListener('input', () => {
-    let value = cardExpiryInput.value.replace(/\D/g, '');
-    if (value.length > 4) value = value.slice(0, 4);
+  if (cardExpiryInput) {
+    cardExpiryInput.addEventListener('input', () => {
+      let value = cardExpiryInput.value.replace(/\D/g, '');
+      if (value.length > 4) value = value.slice(0, 4);
 
-    if (value.length > 2) {
-      const month = parseInt(value.slice(0, 2));
-      const validMonth = (month > 12) ? '12' : value.slice(0, 2);
-      cardExpiryInput.value = `${validMonth}/${value.slice(2)}`;
-    } else {
-      cardExpiryInput.value = value;
-    }
+      if (value.length > 2) {
+        const month = parseInt(value.slice(0, 2));
+        const validMonth = (month > 12) ? '12' : value.slice(0, 2);
+        cardExpiryInput.value = `${validMonth}/${value.slice(2)}`;
+      } else {
+        cardExpiryInput.value = value;
+      }
 
-    const viewValue = cardExpiryInput.value || 'MM/AA';
-    document.getElementById('card-expiry-view').textContent = viewValue;
+      const viewValue = cardExpiryInput.value || 'MM/AA';
+      const viewEl = document.getElementById('card-expiry-view');
+      if (viewEl) viewEl.textContent = viewValue;
 
-    // Resetar estilos de erro ao digitar
-    const errorMsg = document.getElementById('expiry-error-message');
-    if (errorMsg) errorMsg.classList.add('hide');
-    const wrapper = cardExpiryInput.closest('.input-wrapper');
-    if (wrapper) wrapper.classList.remove('input-error');
-  });
+      // Resetar estilos de erro ao digitar
+      const errorMsg = document.getElementById('expiry-error-message');
+      if (errorMsg) errorMsg.classList.add('hide');
+      const wrapper = cardExpiryInput.closest('.input-wrapper');
+      if (wrapper) wrapper.classList.remove('input-error');
+    });
+  }
 
   // Máscara CVV
-  cardCvvInput.addEventListener('input', () => {
-    let value = cardCvvInput.value.replace(/\D/g, '');
-    if (value.length > 4) value = value.slice(0, 4);
-    cardCvvInput.value = value;
+  if (cardCvvInput) {
+    cardCvvInput.addEventListener('input', () => {
+      let value = cardCvvInput.value.replace(/\D/g, '');
+      if (value.length > 4) value = value.slice(0, 4);
+      cardCvvInput.value = value;
 
-    document.getElementById('card-cvv-view').textContent = value || '•••';
-  });
+      const viewEl = document.getElementById('card-cvv-view');
+      if (viewEl) viewEl.textContent = value || '•••';
+    });
+  }
 
   // Máscara CPF do Titular do Cartão: XXX.XXX.XXX-XX
   const cardHolderCpfInput = document.getElementById('card_holder_cpf');
@@ -1527,26 +1541,31 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
 
   // Nome do Titular
   const cardHolderInput = document.getElementById('card_holder');
-  cardHolderInput.addEventListener('input', () => {
-    let value = cardHolderInput.value.toUpperCase();
-    value = value.replace(/[^A-Z\s]/g, '');
-    cardHolderInput.value = value;
-    
-    document.getElementById('card-holder-view').textContent = value || 'NOME COMPLETO';
-  });
+  if (cardHolderInput) {
+    cardHolderInput.addEventListener('input', () => {
+      let value = cardHolderInput.value.toUpperCase();
+      value = value.replace(/[^A-Z\s]/g, '');
+      cardHolderInput.value = value;
+      
+      const viewEl = document.getElementById('card-holder-view');
+      if (viewEl) viewEl.textContent = value || 'NOME COMPLETO';
+    });
+  }
 
   // ==========================================
   // 4. EFEITO DE ROTAÇÃO 3D DO CARTÃO
   // ==========================================
   const virtualCard = document.getElementById('virtual-card');
 
-  cardCvvInput.addEventListener('focus', () => {
-    virtualCard.classList.add('flip');
-  });
+  if (virtualCard && cardCvvInput) {
+    cardCvvInput.addEventListener('focus', () => {
+      virtualCard.classList.add('flip');
+    });
 
-  cardCvvInput.addEventListener('blur', () => {
-    virtualCard.classList.remove('flip');
-  });
+    cardCvvInput.addEventListener('blur', () => {
+      virtualCard.classList.remove('flip');
+    });
+  }
 
   // ==========================================
   // 5. DETECÇÃO DE BANDEIRA DE CARTÃO
@@ -1569,9 +1588,13 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
     const logoView = document.getElementById('card-logo-view');
     
     if (number.length === 0) {
-      brandBadge.innerHTML = brandIcons.generic;
-      brandBadge.classList.remove('detected');
-      logoView.innerHTML = brandIcons.generic;
+      if (brandBadge) {
+        brandBadge.innerHTML = brandIcons.generic;
+        brandBadge.classList.remove('detected');
+      }
+      if (logoView) {
+        logoView.innerHTML = brandIcons.generic;
+      }
       detectedBrand = null;
       return;
     }
@@ -1596,18 +1619,22 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
 
     detectedBrand = brand === 'generic' ? null : brand;
 
-    brandBadge.innerHTML = brandIcons[brand];
-    logoView.innerHTML = brandIcons[brand];
-    
-    if (brand !== 'generic') {
-      brandBadge.classList.add('detected');
-    } else {
-      brandBadge.classList.remove('detected');
+    if (brandBadge) {
+      brandBadge.innerHTML = brandIcons[brand];
+      if (brand !== 'generic') {
+        brandBadge.classList.add('detected');
+      } else {
+        brandBadge.classList.remove('detected');
+      }
+    }
+    if (logoView) {
+      logoView.innerHTML = brandIcons[brand];
     }
   }
 
   function updateVirtualCardNumber(formattedNumber) {
     const view = document.getElementById('card-number-view');
+    if (!view) return;
     if (!formattedNumber) {
       view.textContent = '•••• •••• •••• ••••';
       return;
