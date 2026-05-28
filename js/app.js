@@ -1737,7 +1737,7 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
     const currentVal = select.value;
     select.innerHTML = '';
     
-    for (let i = 1; i <= 6; i++) {
+    for (let i = 1; i <= 12; i++) {
       const partPrice = (totalPrice / i).toFixed(2);
       const formattedPart = parseFloat(partPrice).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
       const option = document.createElement('option');
@@ -1745,17 +1745,6 @@ Obs: Caso já tenha realizado o pagamento, enviaremos uma mensagem confirmando a
       option.textContent = `${i}x de ${formattedPart} Sem juros`;
       select.appendChild(option);
     }
-    
-    const interestRate = 0.0199;
-    [10, 12].forEach(i => {
-      const totalWithInterest = totalPrice * Math.pow(1 + interestRate, i);
-      const partPrice = (totalWithInterest / i).toFixed(2);
-      const formattedPart = parseFloat(partPrice).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-      const option = document.createElement('option');
-      option.value = i.toString();
-      option.textContent = `${i}x de ${formattedPart} Com juros`;
-      select.appendChild(option);
-    });
     
     if (currentVal && select.querySelector(`option[value="${currentVal}"]`)) {
       select.value = currentVal;
